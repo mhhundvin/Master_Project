@@ -1,0 +1,23 @@
+TODO:
+* update contains_cycle() functions to have a list; visited, so not to look at same nonterminal
+  several times.
+    * Also make it so that only contains_cycle() in Nonterminal class checks if it is the same?
+* terminal/literal/string
+    * now:  "\"" -> \"
+    * want: "\"" -> "
+    * using str.replace('\\', '') to to id now
+* regular expression
+    * now return a word from a list of fruits
+
+
+
+
+Add a start and shortest parameter to generate functions
+    * star is the nonterminal we started with to find cycels
+    * shortest is a boolean value for knowin if we want
+      recursion, repetiotion and optionalety.
+Or another function for finding cycles in each class:
+    def contains_cycle(self, nonterminal):
+        if isinstance(self.args, Nonterminal):
+            return self.args == nonterminal
+        return self.args.contains_cycle(nonterminal)
