@@ -1,0 +1,111 @@
+program: "program" CNAME "{" variable_decl+ statement+ "}"
+
+
+
+variable_decl: "var" CNAME
+             | "let" CNAME
+             | "const" CNAME
+
+
+
+statement: while_statement
+         | if_then_statement
+         | print_statement
+         | assignment_statement
+        //  | stmt_a
+
+
+
+while_statement: "while" "(" expr ")" "{" statement* "}"
+            //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
+// statement_2: statement_3
+// statement_3: "HELLOA"//while_statement
+
+// stmt_a: stmt_b | stmt_c | stmt_d
+// stmt_b: "b" [stmt_a] stmt_a //| "b" stmt_a 
+// stmt_c: "c" [stmt_a] 
+// stmt_d: "d" [stmt_a] 
+
+
+
+if_then_statement: "if" "(" expr ")" "{" statement* "}"
+
+
+
+print_statement: "print" expr
+
+
+
+assignment_statement: CNAME "=" expr
+
+
+
+expr: NUMBER
+    | expr "+" expr
+    | expr "-" expr
+    | expr "*" expr
+    | expr "/" expr
+    | "(" expr ")"
+
+// From GitHub:
+// https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
+//
+// Basic terminals for common use
+
+
+//
+// Numbers
+//
+
+DIGIT: "0".."9"
+HEXDIGIT: "a".."f"|"A".."F"|DIGIT
+
+INT: DIGIT+
+SIGNED_INT: ["+"|"-"] INT
+DECIMAL: INT "." INT? | "." INT
+
+// float = /-?\d+(\.\d+)?([eE][+-]?\d+)?/
+_EXP: ("e"|"E") SIGNED_INT
+FLOAT: INT _EXP | DECIMAL _EXP?
+SIGNED_FLOAT: ["+"|"-"] FLOAT
+
+NUMBER: INT //FLOAT | INT
+SIGNED_NUMBER: ["+"|"-"] NUMBER
+
+//
+// Strings
+//
+_STRING_INNER: /.*?/
+_STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
+
+ESCAPED_STRING : "\"" _STRING_ESC_INNER "\""
+
+
+//
+// Names (Variables)
+//
+LCASE_LETTER: "a".."z"
+UCASE_LETTER: "A".."Z"
+
+LETTER: UCASE_LETTER | LCASE_LETTER
+WORD: LETTER+
+
+CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+
+
+//
+// Whitespace
+//
+WS_INLINE: (" "|/\t/)+
+WS: /[ \t\f\r\n]/+
+
+CR : /\r/
+LF : /\n/
+NEWLINE: (CR? LF)+
+
+
+// Comments
+SH_COMMENT: /#[^\n]*/
+CPP_COMMENT: /\/\/[^\n]*/
+C_COMMENT: "/*" /(.|\n)*?/ "*/"
+SQL_COMMENT: /--[^\n]*/
