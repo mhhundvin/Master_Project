@@ -1,3 +1,7 @@
+QUESTIONS:
+* Why is atom_expr in python grammar not changed?
+* Why did we not use transform_grammar_3?
+
 TODO:
 * update contains_cycle() functions to have a list; visited, so not to look at same nonterminal
   several times.

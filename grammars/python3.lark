@@ -14,7 +14,7 @@
 // NB: compound_stmt in single_input is followed by extra NEWLINE!
 // funcdef_2: "def" NAME "(" parameters+ ")"
 
-my_test: exprlist
+my_test: test 
 
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 file_input: (_NEWLINE | stmt)*
@@ -191,5 +191,5 @@ IMAG_NUMBER.2: /\d+j/i | FLOAT_NUMBER "j"i
 
 //TESTING
 
-_INDENT: /    /
-_DEDENT: /    /
+_INDENT: "    "
+_DEDENT: "    "

@@ -17,7 +17,7 @@ def list_to_string(lst):
     for elem in lst:
         if isinstance(elem, Generatable):
             elem = elem.to_string()
-        temp += elem + " "
+        temp += elem
     return temp
 
 class Generatable():
@@ -110,7 +110,8 @@ class Star(Generatable):
         return f'({self.args})*'
     
     def generate_shortest(self, transformed_grammar):
-        return random.choice([self.args.generate_shortest(transformed_grammar), ""])
+        # return random.choice([self.args.generate_shortest(transformed_grammar), ""])
+        return ""
     
     def generate(self):
         terminal_string = ''
@@ -204,7 +205,7 @@ class Regexp(Generatable):
     
     def generate(self):
         words = ["apple", "banana", "cherry"]
-        return " " + random.choice(words)
+        return random.choice(words)
         # return "-regexp-"  # self.args
 
     def contains_cycle(self, nonterminal, visited, grammar):

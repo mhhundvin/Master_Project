@@ -151,9 +151,9 @@ def transform_grammar_3(grammar):
 
 
 transformed_grammar = transform_grammar(grammar, {})   # no cycles in JSON
+# transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 # transformed_grammar = transform_grammar_3(transformed_grammar)        # no cycles in verilog
 # transformed_grammar = transform_grammar_2(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
-# transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 # transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 
 
