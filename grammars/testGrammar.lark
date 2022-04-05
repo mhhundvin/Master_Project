@@ -1,4 +1,6 @@
-program: "program" CNAME "{" variable_decl+ statement+ "}"
+
+
+program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
 
 
@@ -46,6 +48,12 @@ expr: NUMBER
     | expr "*" expr
     | expr "/" expr
     | "(" expr ")"
+
+
+
+SPACE: " "
+
+
 
 // From GitHub:
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark

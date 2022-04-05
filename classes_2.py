@@ -9,6 +9,7 @@ regex
 nonterminal
 terminal - string
 '''
+from distutils.log import error
 import random
 import exrex
 
@@ -17,8 +18,8 @@ def list_to_string(lst):
     for elem in lst:
         if isinstance(elem, Generatable):
             elem = elem.to_string()
-        temp += elem
-    return temp
+        temp += elem + " "
+    return temp[:-1]
 
 class Generatable():
     pass
@@ -83,7 +84,7 @@ class Optional(Generatable):
         return ""
         # arg = random.choice(self.args)
         # if isinstance(arg, Generatable):
-        #     return arg.generate_shortest()
+        #     return arg.generate_shortest(transformed_grammar)
         # return arg
 
     
@@ -110,8 +111,8 @@ class Star(Generatable):
         return f'({self.args})*'
     
     def generate_shortest(self, transformed_grammar):
-        # return random.choice([self.args.generate_shortest(transformed_grammar), ""])
-        return ""
+        return random.choice([self.args.generate_shortest(transformed_grammar), ""])
+        # return ""
     
     def generate(self):
         terminal_string = ''
@@ -177,20 +178,45 @@ class Sequence(Generatable):
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
-        for elem in self.args:
+        args = self.args
+        # if not isinstance(args, list):
+        #     args = [args]
+        for elem in args:
             if elem.contains_cycle(nonterminal, visited, grammar):
                 # if isinstance(elem, Optional):
                 #     return False
                 return True
         return False
 
-# class Expansions(Generatable):
-#     def __init__(self, args):
-#         self.args = args
+class Expansions(Generatable):
+    def __init__(self, args):
+        self.args = args
     
-#     def generate(self):
-#         x = random.choice(self.args)
-#         return x[0].generate()
+    def to_string(self):
+        txt = ''
+        for seq in self.args:
+            txt += seq.to_string() + " | "
+        return txt[:-3]
+    
+    def generate_shortest(self, transformed_grammar):
+        # print(f'Expansions: {self.args}')
+        temp = random.choice(self.args)
+        return temp.generate_shortest(transformed_grammar)
+    
+    def generate(self):
+        temp = random.choice(self.args)
+        return temp.generate()
+    
+    def contains_cycle(self, nonterminal, visited, grammar):
+        args = self.args
+        # if not isinstance(args, list):
+        #     args = [args]
+        cycles = []
+        for elem in args:
+            if elem.contains_cycle(nonterminal, visited, grammar):
+                cycles.append(elem)
+        return len(args) == len(cycles)
+        # return False
 
 class Regexp(Generatable):
     def __init__(self, args):

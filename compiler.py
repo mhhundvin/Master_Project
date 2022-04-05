@@ -2,7 +2,7 @@ from random import choice
 from lark import Transformer
 from collections import defaultdict
 from lark_parser import tree
-from classes_2 import list_to_string, Nonterminal, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
+from classes_2 import list_to_string, Nonterminal, Terminal, Regexp, Star, Plus, Optional, Sequence, Expansions, Repeat, Literal_Range
 
 grammar = defaultdict(list)
 transformed_grammar = defaultdict(list)
@@ -19,12 +19,16 @@ class Compiler(Transformer):
         grammar[args[0]] = args[-1]
 
     def expansions(self, args):
-        # print(f'EXPANSIONS: {args}\n')
+        # print(f'EXPANSIONS: {args}')
         lst = []
         for elem in args:
+            # lst.append( elem[0] )
             lst.append(Sequence( elem ))
         return lst
-        # return Optional( lst )
+        # return [ Optional( lst ) ]
+
+        # print(f'\tEXPANSIONS: {lst}\n')
+        # return [ Expansions( lst ) ]
 
     
     def alias(self, args):
@@ -60,12 +64,17 @@ class Compiler(Transformer):
         return args
     
     def group(self, args):
-        # print(f'GROUP: {args[0][0]}')
-        return Sequence( args[0] )
+        print(f'GROUP: {args[0]}')
+        return Expansions( args[0] )
+        # return args[0]
 
     def maybe(self, args):
-        # print(f'MAYBR: {args[0][0]}')
-        return Optional( [args[0][0], ''] )
+        # print(f'MAYBE: {args[0]}')
+        arg = args[0]
+        if not isinstance(arg, list):
+            arg = [arg]
+        return Optional( arg )
+
 
     def value(self, args):
         return args
@@ -100,6 +109,10 @@ class Compiler(Transformer):
 Compiler().transform(tree)
 
 
+# for k, v in grammar.items():
+#     print(f'{k.to_string()}: {v}\n')
+
+
 def transform_grammar(grammar, transformed_grammar):
     for k,v in grammar.items():
 
@@ -112,10 +125,10 @@ def transform_grammar(grammar, transformed_grammar):
             if not temp:
                 no_cycles.append(seq)
 
-        if len(no_cycles) == 0:
-            transformed_grammar[k] = v
-        else:
+        if len(no_cycles) != 0:
             transformed_grammar[k] = no_cycles
+        else:
+            transformed_grammar[k] = v
     
     return transformed_grammar
 
@@ -182,10 +195,10 @@ for g, t in list(zip(grammar, transformed_grammar)):
     temp = list_to_string(transformed_grammar[t]).split(" ")
     temp = ""
     for elem in transformed_grammar[t]:
-        temp += elem.to_string() + "| "
+        temp += elem.to_string() + " | "
     temp2 = ""
     for elem in grammar[t]:
-        temp2 += elem.to_string() + "| "
+        temp2 += elem.to_string() + " | "
     
     if temp == temp2:
         continue
@@ -216,17 +229,17 @@ for k, v in transformed_grammar.items():
 print("-----------------------------------------------")
 print("-----------------------------------------------")
 print("-----------------------------------------------")
-
+# transform_grammar = grammar
 for k,v in transformed_grammar.items():
     if k.to_string() == "DIGIT":
         break
     
-    # print(f'v: {v}')
     if len(v) == 0:
         opt = Terminal( "" )
     else:
         opt = choice(v)
-    print(f'{k.to_string()}:\n\n{opt.generate_shortest(transformed_grammar)}\n\n')
+
+    print(f'{k.to_string()}:\n\t{opt.generate_shortest(transformed_grammar)}\n\n')
 
     break
     
