@@ -64,7 +64,7 @@ class Compiler(Transformer):
         return args
     
     def group(self, args):
-        print(f'GROUP: {args[0]}')
+        # print(f'GROUP: {args[0]}')
         return Expansions( args[0] )
         # return args[0]
 
@@ -164,7 +164,7 @@ def transform_grammar_3(grammar):
 
 
 transformed_grammar = transform_grammar(grammar, {})   # no cycles in JSON
-# transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
+transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 # transformed_grammar = transform_grammar_3(transformed_grammar)        # no cycles in verilog
 # transformed_grammar = transform_grammar_2(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 # transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
@@ -187,8 +187,10 @@ transformed_grammar = transform_grammar(grammar, {})   # no cycles in JSON
 #     print(f'{k.to_string()}:\n\t{v}')
 
 
+print("-----------------------------------------------")
+print("Non-terminals that have their options changed:")
+print("-----------------------------------------------\n")
 
-# print("Non-terminals that have their options changed:")
 for g, t in list(zip(grammar, transformed_grammar)):
     if g.to_string() == "DIGIT":
         break
@@ -210,8 +212,8 @@ for g, t in list(zip(grammar, transformed_grammar)):
     #     print(f'\t{g.to_string()}')
 
 print("-----------------------------------------------")
-print("-----------------------------------------------")
-print("-----------------------------------------------")
+print("nonterminals with cycles")
+print("-----------------------------------------------\n")
 
 
 for k, v in transformed_grammar.items():
@@ -227,8 +229,8 @@ for k, v in transformed_grammar.items():
 
 
 print("-----------------------------------------------")
-print("-----------------------------------------------")
-print("-----------------------------------------------")
+print("Generated exaples")
+print("-----------------------------------------------\n")
 # transform_grammar = grammar
 for k,v in transformed_grammar.items():
     if k.to_string() == "DIGIT":

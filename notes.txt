@@ -1,31 +1,28 @@
 QUESTIONS:
-* Why is atom_expr in python grammar not changed?
-* Why did we not use transform_grammar_3?
-* verilog grammar contains cycles after calling transform_grammar one,
-  but not after calling it twice
+* Why is not_test and atom_expr in python grammar not changed?
+    A long cycle?
+    They change after transform_grammar() second call
 
+* Why did we not use transform grammar 3?
+    Not necessary
+
+* verilog grammar contains cycles after calling transform_grammar one,
+  but not after calling it twice.
+    Same for python grammar
+
+* Where can spaces be added so it ends up correct?
+    Nowhere...
+    Has to be added as a Token in the grammar   
   
 
+
+
+
 TODO:
-* update contains_cycle() functions to have a list; visited, so not to look at same nonterminal
-  several times.
-    * Also make it so that only contains_cycle() in Nonterminal class checks if it is the same?
 * terminal/literal/string
     * now:  "\"" -> \"
     * want: "\"" -> "
-    * using str.replace('\\', '') to to id now
+    * using str.replace('\\', '') to to it now
 * regular expression
     * now return a word from a list of fruits
 
-
-
-
-Add a start and shortest parameter to generate functions
-    * star is the nonterminal we started with to find cycels
-    * shortest is a boolean value for knowin if we want
-      recursion, repetiotion and optionalety.
-Or another function for finding cycles in each class:
-    def contains_cycle(self, nonterminal):
-        if isinstance(self.args, Nonterminal):
-            return self.args == nonterminal
-        return self.args.contains_cycle(nonterminal)

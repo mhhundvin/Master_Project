@@ -188,7 +188,7 @@ class Sequence(Generatable):
                 return True
         return False
 
-class Expansions(Generatable):
+class Expansions(Generatable):  # ??? Group ???
     def __init__(self, args):
         self.args = args
     
