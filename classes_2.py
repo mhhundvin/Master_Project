@@ -13,6 +13,23 @@ from distutils.log import error
 import random
 import exrex
 
+def to_simple_list(lst):
+    new_lst = []
+    for elem in lst:
+        if isinstance(elem, Token):
+            new_lst.append(elem)
+        elif isinstance(elem, Terminal):
+            new_lst.append(elem)
+        elif isinstance(elem, Regexp):
+            new_lst.append(elem)
+
+    # print(f'new_lst: {new_lst}')
+    # print(f'lst: {lst}')
+
+    if new_lst:
+        return new_lst
+    return lst
+
 def list_to_string(lst):
     temp = ""
     for elem in lst:
@@ -111,8 +128,8 @@ class Star(Generatable):
         return f'({self.args})*'
     
     def generate_shortest(self, transformed_grammar):
-        return random.choice([self.args.generate_shortest(transformed_grammar), ""])
-        # return ""
+        # return random.choice([self.args.generate_shortest(transformed_grammar), ""])
+        return ""
     
     def generate(self):
         terminal_string = ''
@@ -200,7 +217,8 @@ class Expansions(Generatable):  # ??? Group ???
     
     def generate_shortest(self, transformed_grammar):
         # print(f'Expansions: {self.args}')
-        temp = random.choice(self.args)
+        lst = to_simple_list(self.args)
+        temp = random.choice(lst)       # self.args)
         return temp.generate_shortest(transformed_grammar)
     
     def generate(self):
@@ -209,14 +227,11 @@ class Expansions(Generatable):  # ??? Group ???
     
     def contains_cycle(self, nonterminal, visited, grammar):
         args = self.args
-        # if not isinstance(args, list):
-        #     args = [args]
         cycles = []
         for elem in args:
             if elem.contains_cycle(nonterminal, visited, grammar):
                 cycles.append(elem)
         return len(args) == len(cycles)
-        # return False
 
 class Regexp(Generatable):
     def __init__(self, args):
@@ -256,7 +271,8 @@ class Nonterminal(Generatable):
     
     def generate_shortest(self, transformed_grammar):
         # print(f'GRAMMAR: {random.choice(grammar.get(self))}')
-        arg = random.choice(transformed_grammar.get(self))
+        lst = to_simple_list(transformed_grammar.get(self))
+        arg = random.choice(lst)
         temp = arg.generate_shortest(transformed_grammar)
         return temp
 
@@ -283,6 +299,34 @@ class Nonterminal(Generatable):
         # if isinstance(self.nonterminal, Nonterminal):
         #     return self.nonterminal == nonterminal
         # return self.nonterminal.contains_cycle(nonterminal)
+
+class Token(Generatable):
+    def __init__(self, token, grammar):
+        self.token = token
+        self.grammar = grammar
+    
+    def __hash__(self):
+        return hash(self.token)
+
+    def __eq__(self, other):
+        return self.token == other.token
+    
+    def to_string(self):       
+        return self.token
+    
+    def generate_shortest(self, transformed_grammar):
+        # print(f'GRAMMAR: {random.choice(grammar.get(self))}')
+        arg = random.choice(transformed_grammar.get(self))
+        temp = arg.generate_shortest(transformed_grammar)
+        return temp
+
+    def generate(self):
+        grammar = self.grammar
+        # print(f'GRAMMAR: {random.choice(grammar.get(self))}')
+        return random.choice(grammar.get(self)).generate()
+
+    def contains_cycle(self, token, visited, grammar):
+        return False
 
 class Terminal(Generatable):
     def __init__(self, terminal):    

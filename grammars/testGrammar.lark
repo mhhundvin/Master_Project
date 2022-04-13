@@ -1,4 +1,5 @@
 
+// program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
 program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 

@@ -12,13 +12,37 @@ QUESTIONS:
 
 * Where can spaces be added so it ends up correct?
     Nowhere...
-    Has to be added as a Token in the grammar   
+    Has to be added as a Token in the grammar  
+
+
+
+
+overview:
+2 --> Background
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
   
 
 
 
 
 TODO:
+* function for removing bad options from list.
+    Create Token class to distinguis Token and Rule
+
+
 * terminal/literal/string
     * now:  "\"" -> \"
     * want: "\"" -> "

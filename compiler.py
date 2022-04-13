@@ -2,7 +2,7 @@ from random import choice
 from lark import Transformer
 from collections import defaultdict
 from lark_parser import tree
-from classes_2 import list_to_string, Nonterminal, Terminal, Regexp, Star, Plus, Optional, Sequence, Expansions, Repeat, Literal_Range
+from classes_2 import Generatable, list_to_string, to_simple_list, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Expansions, Repeat, Literal_Range
 
 grammar = defaultdict(list)
 transformed_grammar = defaultdict(list)
@@ -23,7 +23,10 @@ class Compiler(Transformer):
         lst = []
         for elem in args:
             # lst.append( elem[0] )
-            lst.append(Sequence( elem ))
+            if len(elem) == 1 and isinstance(elem[0], Generatable):
+                lst.append(elem[0])
+            else:
+                lst.append(Sequence( elem ))
         return lst
         # return [ Optional( lst ) ]
 
@@ -38,7 +41,11 @@ class Compiler(Transformer):
     def expansion(self, args):
         # args is a list
         # print(f'EXPANSION: {args}')
-        return Sequence( args )
+        if len(args) == 1 and isinstance(args[0], Generatable):
+            return args[0]
+        else:
+            return Sequence( args )
+        # return Sequence( args )
     
     def opexper(self, args):
         # args = atop OP
@@ -66,7 +73,7 @@ class Compiler(Transformer):
     def group(self, args):
         # print(f'GROUP: {args[0]}')
         return Expansions( args[0] )
-        # return args[0]
+        # return args[0][0]
 
     def maybe(self, args):
         # print(f'MAYBE: {args[0]}')
@@ -97,8 +104,8 @@ class Compiler(Transformer):
     
     def TOKEN(self, args):
         if args[0] =='_':
-            return Nonterminal( f'{args[1:]}', grammar )
-        return Nonterminal( f'{args}', grammar )
+            return Token( f'{args[1:]}', grammar )
+        return Token( f'{args}', grammar )
 
     def STRING(self, args):
         return Terminal( args[1:-1] )     # args[1:-1]
@@ -129,6 +136,16 @@ def transform_grammar(grammar, transformed_grammar):
             transformed_grammar[k] = no_cycles
         else:
             transformed_grammar[k] = v
+
+    for k, v in transformed_grammar.items():
+
+    # print(f'{k.to_string()}:')
+        for seq in v:
+            temp = seq.contains_cycle(k, [], transformed_grammar)
+            # print(f'\t{temp}')
+            if temp:
+                transformed_grammar = transform_grammar(transformed_grammar, {})
+
     
     return transformed_grammar
 
@@ -164,7 +181,7 @@ def transform_grammar_3(grammar):
 
 
 transformed_grammar = transform_grammar(grammar, {})   # no cycles in JSON
-transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
+# transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 # transformed_grammar = transform_grammar_3(transformed_grammar)        # no cycles in verilog
 # transformed_grammar = transform_grammar_2(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
 # transformed_grammar = transform_grammar(transformed_grammar, {})        # 16 -> 13 cycles in python, doing it again changes nothing.
