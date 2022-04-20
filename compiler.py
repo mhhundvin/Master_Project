@@ -256,7 +256,7 @@ for k,v in transformed_grammar.items():
     if len(v) == 0:
         opt = Terminal( "" )
     else:
-        opt = choice(v)
+        opt = choice(to_simple_list(v))
 
     print(f'{k.to_string()}:\n\t{opt.generate_shortest(transformed_grammar)}\n\n')
 
