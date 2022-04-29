@@ -1,18 +1,18 @@
+"retell" PhD
+
+
 QUESTIONS:
-* Why is not_test and atom_expr in python grammar not changed?
-    A long cycle?
-    They change after transform_grammar() second call
+* We dont transform the grammar using simple grammar transformations. We only remove cycles for the shortest terminal strings.
+    - Do we then need to talk abput them in the thesis?
+    - Is it still relatable to Vadim's PhD?
 
-* Why did we not use transform grammar 3?
-    Not necessary
+* Language consist of structure (syntax), and meaning (semantics). But we only get syntax from the grammar.
+    - How will we add meaning to our generated examples?
 
-* verilog grammar contains cycles after calling transform_grammar one,
-  but not after calling it twice.
-    Same for python grammar
 
 * Where can spaces be added so it ends up correct?
     Nowhere...
-    Has to be added as a Token in the grammar  
+    Has to be added as a Token in the grammar?
 
 
 
@@ -30,8 +30,8 @@ overview:
 
 
 
-
-
+Language:
+A system of communication, with structure (syntax), and meaning (semantics)
  
   
 

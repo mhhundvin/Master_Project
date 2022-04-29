@@ -14,9 +14,11 @@
 // NB: compound_stmt in single_input is followed by extra NEWLINE!
 // funcdef_2: "def" NAME "(" parameters+ ")"
 
-la: lala
-lala: my_test | "abc"
-my_test: ( "a" | "b" | "c" ) // while_stmt
+// la: lala
+// lala: my_test | "abc"
+// my_test: ( "a" | "b" | "c" ) // while_stmt
+
+my_test: atom
 
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 file_input: (_NEWLINE | stmt)*

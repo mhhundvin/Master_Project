@@ -1,0 +1,89 @@
+This program generates shortest terminal string for the nonterminals in a grammar.
+
+import functionality from Lark
+
+function algorithm(Lark inGrammar, Lark larkGrammar, Int depth){
+    Creat a lark parser using grammar for lark and lakr library
+    larkParser = Lark(larkGrammar)
+
+    Use larkParser to parse inGrammar to get a parse tree
+    tree = larkParser(inGrammar)
+
+    Traverse the tree to convert it into a representation we can modify
+    grammar = Lark.Transforme(tree)
+
+    Remove cycles from the grammar
+    noCycleGrammar, cycleGrammar = removeCyclesFromGrammar(grammar)
+
+    Generate shortest terminal string from transformedGrammar
+    for nonterminal in transformedGrammar
+        generateShortest(nonterminal)
+    
+    Generate full terminal string from grammar
+    for nonterminal in grammar
+        generateString(nonterminal, depth)
+        
+
+
+}
+
+function removeCyclesFromGrammar(grammar){
+    Go through every nonterminal of the grammar to check if the
+    nonterminal have one or more alternatives that don't contain cycles.
+    If there is such an alternative, remove all alternatives that have cycles
+    from the nonterminal.
+    optional elements are not cycles.
+
+    var noCycleGrammar
+    var cycleGrammar
+    for nonterminal in grammar
+        noCycleNonterminal, cycleNonterminal = transformeNonterminal(nonterminal)
+        add noCycleNonterminal to NoCycleGrammar
+        add cycleNonterminal to cycleGrammar
+    
+    return noCycleGrammar, cycleGrammar
+}
+
+function transformeNonterminal(nonterminal){
+    var noCycleNonterminal
+    var cycleNonterminal
+    for alternative in nonterminal
+        if alternative do not contain cycle
+            add it to noCycleNonterminal
+        else
+            add it to cycleNonterminal
+    
+    return noCycleNonterminal, cycleNonterminal
+}
+
+function generateString(nonterminal, depth = 0){
+    // depth = 0 means shortest terminal string
+
+    if nonterminal have multiple alternatives
+        if depth = 0 and there is alternatives that are a Token, Terminal or Regexp
+            nonterminal = random one from these
+        else
+            nonterminal = random one from all alternatives
+
+    if nonterminal is a Terminal
+        return nonterminal
+    
+    else if nonterminal is a Regexp
+        return generated regular expression from nonterminal
+    
+    else if nonterminal is a Sequence
+        var terminalString
+        for element in nonterminal
+            terminalString += generateString(element, depth-1)
+        return terminalString
+    
+    else if nonterminal is Optional
+        return random generateShortest(nonterminal) or empty string
+    
+    else if nonterminal is Plus or Star or other repetition
+        return generateShortest(nonterminal) repeated a random number of times 
+
+    else
+        // Chain rule: A -> B
+        return generateShortest(nonterminal)
+}

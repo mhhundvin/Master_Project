@@ -1,0 +1,48 @@
+function generat(no-cycle, only-cycle, nonterminal, depth){
+	while depth > 0
+		for element in nonterminal
+	    	if it is a Terminal
+				do nothing
+	    	else
+				if nonterminal in only-cycle
+	        		nonterminal = doStep(only-cycle, nonterminal)
+				else
+		  			nonterminal = doStep(no-cycle, nonterminal)
+				depth -= 1
+
+	while nonterminal contains nonterminals
+    	for element in nonterminal
+			if it is a Terminal
+	    		do nothing
+		else
+	    	if element in no-cycle
+	        	nonterminal = doStep(no-cycle, nonterminal)
+            else
+ 		  		nonterminal = doStep(only-cycle, nonterminal)
+}
+   
+   
+
+
+function doStep(grammar, nonterminal){
+	return grammar[nonterminal]
+}
+    
+
+
+
+
+
+S: AB
+A: bB
+B: d | fC
+C: w | A | B
+
+     6       5         4                 3          2
+S -> AB -> (bB)B -> (bB)(fC) = bBfC -> b(fC)fC -> b(fC)f(A) = bfCfA ->
+
+   1          0
+bf(A)fA -> bf(A)f(bB) = bfAfbB -> bf(bB)fbB -> bf(bB)fb(d) = 
+
+
+bfbBfbd -> bfb(d)fbd = bfbdfbd
