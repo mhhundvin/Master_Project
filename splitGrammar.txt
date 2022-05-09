@@ -56,7 +56,7 @@ function generateNonterminal(noCycleGrammar, leftoverGrammar, nonterminal, depth
             else if element.isGroup():
                 element, depth = generateNonterminal(noCycleGrammar, leftoverGrammar, element, depth)
             else:
-                if depth <= halfway:
+                if depth > halfway:
                     depth -= 1
                     if element in leftoverGrammar:
                         element = doStep(leftoverGrammar, element)

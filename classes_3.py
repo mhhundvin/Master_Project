@@ -52,8 +52,8 @@ class Literal_Range(Generatable):
         self.stop = stop
     
     def to_string(self):
-        if isinstance(self, Generatable):
-            return self.args.to_string()
+        # if isinstance(self, Generatable):
+        #     return self.args.to_string()
         return f'{self.start} ".." {self.stop}'
     
     def generate_shortest(self, transformed_grammar):
@@ -169,6 +169,36 @@ class Plus(Generatable):
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
             return self.args.contains_cycle(nonterminal, visited, grammar)
+        return False
+
+#####################################################################################
+
+class Group(Generatable):
+    def __init__(self, args):
+        self.args = args
+
+    def to_string(self):
+        lst = []
+        for elem in self.args:
+            # print(f'\t----> elem: {elem}')
+            if isinstance(elem, Generatable):
+                lst.append(elem.to_string())
+            else:
+                lst.append(elem)
+        # print(f'\t----> lst: {lst}')
+        temp = ' | '.join(lst)
+        return f'({temp})'
+    
+    def get_arg(self):
+        return self.args
+    
+    def contains_cycle(self, nonterminal, visited, grammar):
+        args = self.args
+        for elem in args:
+            if isinstance(elem, list):
+                elem = elem[0]
+            if elem.contains_cycle(nonterminal, visited, grammar):
+                return True
         return False
 
 #####################################################################################

@@ -1,14 +1,14 @@
 from collections import defaultdict
-from classes_3 import Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
+from classes_3 import Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
 
 def split_grammar(grammar):
     no_cycle_grammar = defaultdict(list)
     leftover_grammar = defaultdict(list)
-    for nonterminal, expansion in grammar.items():
-        print(f'{nonterminal.to_string()}\n\t{expansion}\n\n')
-        for alternative in expansion:
+    for nonterminal, alternatives in grammar.items():
+        print(f'{nonterminal.to_string()}\n\t{alternatives}\n\n')
+        for alternative in alternatives:
 
-            if alternative.contains_cycle(nonterminal, [], grammar):
+            if False:#alternative.contains_cycle(nonterminal, [], grammar):
                 # print(f'\tCYCLE: {alternative.to_string()}\n')
                 leftover_grammar[nonterminal].append(alternative)
                 
@@ -27,6 +27,9 @@ def split_grammar(grammar):
                     elif isinstance(element, Plus):
                         multiple_options = True
                         new_alternative.append(element.get_arg())
+
+                    elif isinstance(element, Group):
+                        pass
                     
                     else:
                         # print(f'\t\telement: {element.to_string()}')
@@ -41,7 +44,10 @@ def split_grammar(grammar):
                     no_cycle_grammar[nonterminal].append(new_alternative)
                     leftover_grammar[nonterminal].append(alternative)
                 else:
-                    no_cycle_grammar[nonterminal].append(alternative)
+                    if alternative.contains_cycle(nonterminal, [], grammar):
+                        leftover_grammar[nonterminal].append(alternative)
+                    else:
+                        no_cycle_grammar[nonterminal].append(alternative)
 
     return no_cycle_grammar, leftover_grammar
 
