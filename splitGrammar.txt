@@ -45,6 +45,7 @@ function generate(grammar, depth){
 ----------------------------------------------------------------------------------------
 
 function generateNonterminal(noCycleGrammar, leftoverGrammar, nonterminal, depth){
+    var halfway = depth / 2
     while (depth > 0){
         var newNonterminal
         for element in nonterminal{
@@ -55,13 +56,22 @@ function generateNonterminal(noCycleGrammar, leftoverGrammar, nonterminal, depth
             else if element.isGroup():
                 element, depth = generateNonterminal(noCycleGrammar, leftoverGrammar, element, depth)
             else:
-                depth -= 1
-                if element in leftoverGrammar:
-                    element = doStep(leftoverGrammar, element)
-                else if element in noCycleGrammar:
-                    element = doStep(noCycleGrammar, element)
+                if depth <= halfway:
+                    depth -= 1
+                    if element in leftoverGrammar:
+                        element = doStep(leftoverGrammar, element)
+                    else if element in noCycleGrammar:
+                        element = doStep(noCycleGrammar, element)
+                    else:
+                        ERROR
                 else:
-                    ERROR
+                    var choices
+                    if element in leftoverGrammar:
+                        choices.add(leftoverGrammar)
+                    if element in noCycleGrammar:
+                        choices.add(noCycleGrammar)
+                    choice = random.choose(choices)
+                    element = doStep(choice, element)
             newNonterminal += element
         }
         nonterminal = newNonterminal
