@@ -18,7 +18,7 @@
 // lala: my_test | "abc"
 // my_test: ( "a" | "b" | "c" ) // while_stmt
 
-my_test: atom
+// my_test: atom
 
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 file_input: (_NEWLINE | stmt)*

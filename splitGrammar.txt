@@ -1,0 +1,99 @@
+function splitGrammar(grammar){
+    var noCycleGrammar
+    var leftoverGrammar
+    for nonterminal in grammar{
+        for alternative in nonterminal{
+            if alternative.containsCycle():
+                leftoverGrammar.add(alternative)
+            else:
+                bool containsOptional = False
+                var newNonterminal
+                for element in alternative{
+                    if element.isOptional or element.isStar():
+                        containsOptional = True
+                    else if element.isPlus:
+                        containsOptional = True
+                        newNonterminal.add(element.getArg())
+                    else:
+                        newNonterminal.add(element)
+                }
+                if containsOptional:
+                    noCycleGrammar.add(newNonterminal)
+                    leftoverGrammar.add(nonterminal)
+                else:
+                    noCycleGrammar.add(nonterminal)
+        }
+    }
+    return noCycleGrammar, leftoverGrammar
+}
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+function generate(grammar, depth){
+    var noCycleGrammar
+    var leftoverGrammar
+    noCycleGrammar, leftoverGrammar = splitGrammar(grammar)
+
+    for nonterminal in grammar{
+        alternative = nonterminal.chooseRandom()
+        generateNonterminal(noCycleGrammar, leftoverGrammar, alternative, depth)
+    }
+}
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+function generateNonterminal(noCycleGrammar, leftoverGrammar, nonterminal, depth){
+    while (depth > 0){
+        var newNonterminal
+        for element in nonterminal{
+            if element.isTerminal():
+                do nothing
+            else if element.isRegExp():
+                element = element.generateRegExp()
+            else if element.isGroup():
+                element, depth = generateNonterminal(noCycleGrammar, leftoverGrammar, element, depth)
+            else:
+                depth -= 1
+                if element in leftoverGrammar:
+                    element = doStep(leftoverGrammar, element)
+                else if element in noCycleGrammar:
+                    element = doStep(noCycleGrammar, element)
+                else:
+                    ERROR
+            newNonterminal += element
+        }
+        nonterminal = newNonterminal
+    }
+
+    while (nonterminal.contains(Nonterminal)){
+        var newNonterminal
+        for element in nonterminal{
+            if element.isTerminal():
+                do nothing
+            else if element.isRegExp():
+                element = element.generateRegExp()
+            else if element.isGroup():
+                element, depth = generateNonterminal(noCycleGrammar, leftoverGrammar, element, depth)
+            else:
+                if element in noCycleGrammar:
+                    element = doStep(noCycleGrammar, element)
+                else if element in leftoverGrammar:
+                    element = doStep(leftoverGrammar, element)
+                else:
+                    ERROR
+            newNonterminal += element
+        }
+        nonterminal = newNonterminal
+    }
+
+    return nonterminal, depth
+}
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+function doStep(grammar, nonterminal){
+	return grammar[nonterminal]
+}

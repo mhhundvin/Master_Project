@@ -1,8 +1,12 @@
-function generat(no-cycle, only-cycle, nonterminal, depth){
+function generate(no-cycle, only-cycle, nonterminal, depth){
 	while depth > 0
 		for element in nonterminal
 	    	if it is a Terminal
 				do nothing
+
+			else if it is a group
+				nonterminal, depth = generat(no-cycle, only-cycle, nonterminal, depth)
+
 	    	else
 				if nonterminal in only-cycle
 	        		nonterminal = doStep(only-cycle, nonterminal)
@@ -10,15 +14,25 @@ function generat(no-cycle, only-cycle, nonterminal, depth){
 		  			nonterminal = doStep(no-cycle, nonterminal)
 				depth -= 1
 
+			element.update(nonterminal)
+
 	while nonterminal contains nonterminals
     	for element in nonterminal
 			if it is a Terminal
 	    		do nothing
-		else
-	    	if element in no-cycle
-	        	nonterminal = doStep(no-cycle, nonterminal)
-            else
- 		  		nonterminal = doStep(only-cycle, nonterminal)
+
+			else if it is a group
+				nonterminal, depth = generat(no-cycle, only-cycle, nonterminal, depth)
+
+			else
+				if element in no-cycle
+					nonterminal = doStep(no-cycle, nonterminal)
+				else
+					nonterminal = doStep(only-cycle, nonterminal)
+
+			element.update(nonterminal)
+	
+	return nonterminal, depth
 }
    
    
