@@ -5,6 +5,7 @@ from collections import defaultdict
 from lark_parser import tree
 from classes_3 import Generatable, Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
 from split_grammar import split_grammar
+from generate import generate
 
 grammar = defaultdict(list)
 transformed_grammar = defaultdict(list)
@@ -139,60 +140,51 @@ class Compiler(Transformer):
 Compiler().transform(tree)
 
 
-no_cycle_grammar, leftover_grammar = split_grammar(grammar)
+print(f'\n\n\n\n\n\n')
+print("########################################################################################################################################################")
+print("########################################################################################################################################################")
 
-print(f'\n\ngrammar: {len(grammar)}, no_cycle: {len(no_cycle_grammar)}, leftover: {len(leftover_grammar)}')
-print(len(no_cycle_grammar) + len(leftover_grammar) , '\n\n')
-# for k, v in grammar.items():
-    # if k.to_string() == "DIGIT":
-    #     break
-    # print(f'{k.to_string()}: {len(v)}\n')
+print(f'\n\n\n\n\n\n')
 
-print()
+print("########################################################################################################################################################")
+print("########################################################################################################################################################")
+print(f'\n\n\n\n\n\n')
 
-# i = 0
-# for k,v, in no_cycle_grammar.items():
+generate(grammar, 10)
+
+# no_cycle_grammar, leftover_grammar = split_grammar(grammar)
+
+# print(f'\n\ngrammar: {len(grammar)}, no_cycle: {len(no_cycle_grammar)}, leftover: {len(leftover_grammar)}')
+# print(len(no_cycle_grammar) + len(leftover_grammar) , '\n\n')
+
+# # for k, v in grammar.items():
+#     # if k.to_string() == "DIGIT":
+#     #     break
+#     # print(f'{k.to_string()}: {len(v)}\n')
+
+# print()
+
+
+
+
+# for k,v in grammar.items():
+
+#     if k.to_string() == "DIGIT":
+#         break
+
+#     print(k.to_string())
+
+#     v = "  |or|  ".join([x.to_string() for x in v])
+#     print(f'\tG\t{v}')
+
+#     if k in no_cycle_grammar.keys():
+#         v1 = no_cycle_grammar[k]
+#         v1 = "  |or|  ".join([x.to_string() for x in v1])
+#         print(f'\tG\'\t{v1}')
+
 #     if k in leftover_grammar.keys():
-#         i += 1
-#         print(k.to_string())
-        
 #         v2 = leftover_grammar[k]
-#         v3 = grammar[k]
-
-#         v11 = " | ".join([x.to_string() for x in v])
-#         v22 = " | ".join([x.to_string() for x in v2])
-#         v33 = " | ".join([x.to_string() for x in v3])
-
-#         # print(f'G:\t{grammar[k]} == {v33}\n')
-#         # print(f'G\'\t{v} == {v11}')
-#         # print(f'G\'\'\t{v2} == {v22}\n\n')
-
-#         print(f'\tG:\t{v33}\n')
-#         print(f'\tG\'\t{v11}')
-#         print(f'\tG\'\'\t{v22}\n\n')
-
-#         # break
-# print(f'Number of overlapping nonterminals: {i}')
-
-
-for k,v in grammar.items():
-
-    if k.to_string() == "DIGIT":
-        break
-
-    print(k.to_string())
-
-    v = "  |or|  ".join([x.to_string() for x in v])
-    print(f'\tG\t{v}')
-
-    if k in no_cycle_grammar.keys():
-        v1 = no_cycle_grammar[k]
-        v1 = "  |or|  ".join([x.to_string() for x in v1])
-        print(f'\tG\'\t{v1}')
-
-    if k in leftover_grammar.keys():
-        v2 = leftover_grammar[k]
-        v2 = "  |or|  ".join([x.to_string() for x in v2])
-        print(f'\tG\'\'\t{v2}')
+#         v2 = "  |or|  ".join([x.to_string() for x in v2])
+#         print(f'\tG\'\'\t{v2}')
     
-    print('\n\n')
+#     print('\n\n')

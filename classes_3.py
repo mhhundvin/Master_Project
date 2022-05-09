@@ -104,6 +104,9 @@ class Optional(Generatable):
 
     def to_string(self):
         return f'[{list_to_string(self.args)}]'
+
+    def get_arg(self):
+        return self.args
     
     def generate_shortest(self, transformed_grammar):
         return ""
@@ -128,6 +131,9 @@ class Star(Generatable):
         if isinstance(self, Generatable):
             return f'({self.args.to_string()})*'
         return f'({self.args})*'
+
+    def get_arg(self):
+        return self.args
     
     def generate_shortest(self, transformed_grammar):
         return ""

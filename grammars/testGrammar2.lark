@@ -49,7 +49,10 @@ expr: NUMBER
     | expr "*" expr
     | expr "/" expr
     | "(" expr ")"
+    | num+num*
 
+num : a* ".0" num?
+a : "1"* | "2"*
 
 
 SPACE: " "
