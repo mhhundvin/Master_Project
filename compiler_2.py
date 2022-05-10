@@ -5,7 +5,7 @@ from collections import defaultdict
 from lark_parser import tree
 from classes_3 import Generatable, Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
 from split_grammar import split_grammar
-from generate import generate
+from generate2 import generate
 
 grammar = defaultdict(list)
 transformed_grammar = defaultdict(list)
@@ -67,7 +67,7 @@ class Compiler(Transformer):
         elif op == "*":
             return Star( arg )
         elif op == "?":
-            return Optional( [arg, ''] )
+            return Optional( Sequence( [arg, ''] ))
         else:
             print(f'OPEXPER: {op}')
 

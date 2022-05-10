@@ -107,3 +107,39 @@ function generateNonterminal(noCycleGrammar, leftoverGrammar, nonterminal, depth
 function doStep(grammar, nonterminal){
 	return grammar[nonterminal]
 }
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+
+
+while contains_nonterminal(alternative):
+    if nonterminal is a Nonterminal
+        if depth > halfway
+            if nonterminal in leftover_grammar.keys()
+                leftover_grammar
+            elif nonterminal in no_cycle_grammar.keys()
+                no_cycle_grammar
+            else
+                rais Exception("WHAT?!?!)
+        elif depth < 0
+            if nonterminal in no_cycle_grammar.keys()
+                no_cycle_grammar
+            elif nonterminal in leftover_grammar.keys()
+                leftover_grammar
+            else
+                rais Exception("WHAT?!?!)
+            no_cycle_grammar
+        else
+            grammars = []
+            if nonterminal in leftover_grammar.keys()
+                grammars.append(leftover_grammar)
+            elif nonterminal in no_cycle_grammar.keys()
+                grammars.append(no_cycle_grammar)
+            else
+                rais Exception("WHAT?!?!) 
+            chooseRandom(grammars)

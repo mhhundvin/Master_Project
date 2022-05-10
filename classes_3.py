@@ -52,9 +52,13 @@ class Literal_Range(Generatable):
         self.stop = stop
     
     def to_string(self):
-        # if isinstance(self, Generatable):
-        #     return self.args.to_string()
-        return f'{self.start} ".." {self.stop}'
+        start = self.start
+        stop = self.stop
+        if isinstance(start, Generatable):
+            start = start.to_string()
+        if isinstance(stop, Generatable):
+            stop = stop.to_string()
+        return f'{start} ".." {stop}'
     
     def generate_shortest(self, transformed_grammar):
         return self.generate() 
@@ -103,7 +107,8 @@ class Optional(Generatable):
         self.args = args
 
     def to_string(self):
-        return f'[{list_to_string(self.args)}]'
+        arg = self.args.get_arg()
+        return f'[{list_to_string(arg)}]'
 
     def get_arg(self):
         return self.args
@@ -113,7 +118,8 @@ class Optional(Generatable):
 
     
     def generate(self):
-        arg = random.choice(self.args)
+        args = self.args.get_arg()
+        arg = random.choice(args)
         if isinstance(arg, Generatable):
             return arg.generate()
         return arg
@@ -139,9 +145,11 @@ class Star(Generatable):
         return ""
     
     def generate(self):
+        arg = self.args
         terminal_string = ''
         for _ in range(0, random.randint(0,3)):
-            terminal_string += self.args.generate()
+            # print(arg)
+            terminal_string += arg.generate()
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
@@ -167,9 +175,12 @@ class Plus(Generatable):
         return self.args.generate_shortest(transformed_grammar)
     
     def generate(self):
+        arg = self.args
+        if isinstance(arg, list):
+            arg = arg[0]
         terminal_string = ''
         for _ in range(0, random.randint(1,3)):
-            terminal_string += self.args.generate()
+            terminal_string += arg.generate()
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
@@ -197,6 +208,10 @@ class Group(Generatable):
     
     def get_arg(self):
         return self.args
+    
+    def generate(self):
+        arg = random.choice(self.args)
+        return arg.generate()
     
     def contains_cycle(self, nonterminal, visited, grammar):
         args = self.args

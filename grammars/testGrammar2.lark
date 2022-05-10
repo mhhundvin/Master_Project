@@ -1,9 +1,10 @@
 
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
-program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
+program: "program" SPACE CNAME SPACE "{" variable_decl SPACE statement "}"
 
-
+c: variable_decl SPACE
+b: statement SPACE
 
 variable_decl: "var" CNAME
              | "let" CNAME
@@ -51,7 +52,7 @@ expr: NUMBER
     | "(" expr ")"
     | num+num*
 
-num : a* ".0" num?
+num : a* ".0" num? "x"
 a : "1"* | "2"*
 
 
@@ -73,16 +74,20 @@ DIGIT: "0".."9"
 HEXDIGIT: "a".."f"|"A".."F"|DIGIT
 
 INT: DIGIT+
-SIGNED_INT: ["+"|"-"] INT
+SIGNED_INT: PLUS_MINUS? INT
 DECIMAL: INT "." INT? | "." INT
 
 // float = /-?\d+(\.\d+)?([eE][+-]?\d+)?/
-_EXP: ("e"|"E") SIGNED_INT
+_EXP: EXP2 SIGNED_INT
+EXP2: "e"|"E"
 FLOAT: INT _EXP | DECIMAL _EXP?
-SIGNED_FLOAT: ["+"|"-"] FLOAT
+SIGNED_FLOAT: PLUS_MINUS? FLOAT
+SIGNED_FLOAT2: 
 
 NUMBER: INT //FLOAT | INT
-SIGNED_NUMBER: ["+"|"-"] NUMBER
+SIGNED_NUMBER: PLUS_MINUS? NUMBER
+
+PLUS_MINUS: "+"|"-"
 
 //
 // Strings
@@ -102,19 +107,22 @@ UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 WORD: LETTER+
 
-CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+CNAME: CNAME2 CNAME3*
+CNAME2: "_"|LETTER
+CNAME3: "_"|LETTER|DIGIT
 
 
 //
 // Whitespace
 //
-WS_INLINE: (" "|/\t/)+
+WS_INLINE: WS_INLINE2+
+WS_INLINE2: " "|/\t/
 WS: /[ \t\f\r\n]/+
 
 CR : /\r/
 LF : /\n/
-NEWLINE: (CR? LF)+
-
+NEWLINE: NEWLINE2+
+NEWLINE2: CR? LF
 
 // Comments
 SH_COMMENT: /#[^\n]*/
