@@ -5,8 +5,8 @@ from classes_3 import Group, Nonterminal, Sequence, Plus, Star, Optional, Litera
 def extract_groups(grammar):
     new_grammar = defaultdict(list)
     for nonterminal, alternatives in grammar.items():
-        if nonterminal.to_string() == "DIGIT":
-            break
+        # if nonterminal.to_string() == "DIGIT":
+        #     break
 
         for alternative in alternatives:
             print(f'{nonterminal.to_string()}:\t{alternative}')
@@ -16,12 +16,15 @@ def extract_groups(grammar):
             temp, _ = extract_group(new_grammar, nonterminal, alternative, 0)
             new_grammar[nonterminal].append(temp)
             # print(new_grammar.keys())
-        break
+        # break
     print('\n##############################\n')
     for k, v in new_grammar.items():
-        print(f'\n{k.to_string()}:\t\t\t{v}')
+        print(f'\n{k.to_string()}:')#\t\t\t{v}')
         for elem in v:
             print(f'\t{elem.to_string()}')
+    
+    return new_grammar
+
 
 def extract_group(grammar, nonterminal, alternative, num):
     # print(f'1: {alternative}')
@@ -31,7 +34,7 @@ def extract_group(grammar, nonterminal, alternative, num):
     elif not isinstance(alternative, Sequence):
         alternative = Sequence( [alternative] )
 
-    print(f'2: {alternative} --> {alternative.get_arg()}')
+    # print(f'2: {alternative} --> {alternative.get_arg()}')
     # print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     
     new_alternative = []

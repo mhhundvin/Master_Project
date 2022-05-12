@@ -12,7 +12,8 @@ def split_grammar(grammar):
                 # print(f'\tCYCLE: {alternative.to_string()}\n')
                 # leftover_grammar[nonterminal].append(alternative)
                 pass
-                
+            
+
             else:
                 if not isinstance(alternative, Sequence):
                     # print(f'--isinst... {alternative}')
@@ -22,6 +23,7 @@ def split_grammar(grammar):
                 new_alternative = []
                 # print(f'---->{alternative} --> {alternative.get_arg()}')
                 for element in alternative.get_arg():
+                    # print(f'1: {element}')
                     if isinstance(element, Optional) or isinstance(element, Star):
                         multiple_options = True
 
@@ -29,13 +31,15 @@ def split_grammar(grammar):
                         multiple_options = True
                         new_alternative.append(element.get_arg())
 
-                    elif isinstance(element, Group):
-                        pass
+                    # elif isinstance(element, Group):
+                    #     pass
                     
                     else:
                         # print(f'\t\telement: {element.to_string()}')
                         new_alternative.append(element)
-                
+                    # print(f'2: {element}')
+                    
+                # print(f'==>{new_alternative}, {multiple_options}')
 
                 # print(f'\tNO CYCLE')
                 # print(f'\talternative: {alternative.to_string()}')

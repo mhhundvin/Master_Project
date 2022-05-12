@@ -315,6 +315,7 @@ class Nonterminal(Generatable):
         return hash(self.nonterminal)
 
     def __eq__(self, other):
+        print(f'\n\n{self.nonterminal} == {other}')
         return self.nonterminal == other.nonterminal
     
     def to_string(self):       
@@ -331,7 +332,9 @@ class Nonterminal(Generatable):
         return random.choice(grammar.get(self)).generate()
 
     def contains_cycle(self, nonterminal, visited, grammar):
-        if self in visited:
+        # Why do i need the or?
+        # withoute it I get an error when calling contains_cycle in split_grammar
+        if self in visited or isinstance(nonterminal, Token):
             return False
         if self == nonterminal:
             return True
