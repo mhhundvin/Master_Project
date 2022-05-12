@@ -11,6 +11,7 @@ terminal - string
 '''
 from distutils.log import error
 import random
+from tracemalloc import start, stop
 import exrex
 
 def to_simple_list(lst):
@@ -60,6 +61,15 @@ class Literal_Range(Generatable):
             stop = stop.to_string()
         return f'{start} ".." {stop}'
     
+    def get_arg(self):
+        start = self.start
+        stop = self.stop
+        if isinstance(start, Generatable):
+            start = start.to_string()
+        if isinstance(stop, Generatable):
+            stop = stop.to_string()
+        return start, stop
+    
     def generate_shortest(self, transformed_grammar):
         return self.generate() 
 
@@ -75,29 +85,42 @@ class Literal_Range(Generatable):
 
 # expr_range
 class Repeat(Generatable):
-    def __init__(self, args, start=0, end=random.randint(1,3)):
+    def __init__(self, args, start=0, stop=random.randint(1,3)):
         self.args = args
         self.start = start
-        self.end = end
+        self.stop = stop
 
     def to_string(self):
-        if isinstance(self, Generatable):
-            return self.args.to_string()
-        return self.args
+        arg = self.args
+        if isinstance(arg, Generatable):
+            arg = arg.to_string()
+        txt = f'{arg} ~ {self.start} .. {self.stop}'
+        return txt
+    
+    def get_arg(self):
+        return self.args, self.start, self.stop
 
     def generate_shortest(self, transformed_grammar):
         return self.args.generate_shortest(transformed_grammar)
 
     def generate(self):
         arg = self.args
+        start = self.start
+        stop = self.stop
+        if isinstance(start, Generatable):
+            start = start.generate()
+        if isinstance(stop, Generatable):
+            stop = stop.generate()
         terminal_string = ''
-        for _ in range(self.start, self.end+1):
+        # print(f's: {start}, e: {end}')
+        start, stop = int(start), int(stop)
+        for _ in range(start, stop):
             terminal_string += arg.generate()
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
-            return self.args.contains_cycle(nonterminal, visited )
+            return self.args.contains_cycle(nonterminal, visited, grammar )
         return False
 
 #####################################################################################
@@ -108,7 +131,7 @@ class Optional(Generatable):
 
     def to_string(self):
         arg = self.args.get_arg()
-        return f'[{list_to_string(arg)}]'
+        return f'<{list_to_string(arg)}>?'
 
     def get_arg(self):
         return self.args
@@ -118,7 +141,10 @@ class Optional(Generatable):
 
     
     def generate(self):
-        args = self.args.get_arg()
+        # print(f'\n\n\t{self.args}')
+        args = self.args
+        if isinstance(args, Sequence):
+            args = args.get_arg()
         arg = random.choice(args)
         if isinstance(arg, Generatable):
             return arg.generate()
@@ -135,8 +161,8 @@ class Star(Generatable):
 
     def to_string(self):
         if isinstance(self, Generatable):
-            return f'({self.args.to_string()})*'
-        return f'({self.args})*'
+            return f'<{self.args.to_string()}>*'
+        return f'<{self.args}>*'
 
     def get_arg(self):
         return self.args
@@ -165,8 +191,8 @@ class Plus(Generatable):
 
     def to_string(self):
         if isinstance(self, Generatable):
-            return f'({self.args.to_string()})+'
-        return f'({self.args})+'
+            return f'<{self.args.to_string()}>+'
+        return f'<{self.args}>+'
 
     def get_arg(self):
         return self.args

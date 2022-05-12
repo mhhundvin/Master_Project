@@ -1,6 +1,10 @@
 
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
+// test: num+ "+" ("123" | (a))?
+lala_test : ("la" | test) ~ 1 .. 9
+test: (num | "abc")? "+"
+
 program: "program" SPACE CNAME SPACE "{" variable_decl SPACE statement "}"
 
 c: variable_decl SPACE
@@ -50,11 +54,12 @@ expr: NUMBER
     | expr "*" expr
     | expr "/" expr
     | "(" expr ")"
-    | num+num*
+    | num+ "+" num*
 
 num : a* ".0" num? "x"
 a : "1"* | "2"*
 
+lala : "la" ~ 1 .. 9
 
 SPACE: " "
 

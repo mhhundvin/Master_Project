@@ -6,6 +6,7 @@ from lark_parser import tree
 from classes_3 import Generatable, Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
 from split_grammar import split_grammar
 from generate2 import generate
+from extract_groups import extract_groups
 
 grammar = defaultdict(list)
 transformed_grammar = defaultdict(list)
@@ -104,7 +105,7 @@ class Compiler(Transformer):
         arg = args[0]
         if not isinstance(arg, list):
             arg = [arg]
-        return Optional( arg )
+        return Optional( Group( arg ))
 
 
     def value(self, args):
@@ -150,7 +151,8 @@ print("#########################################################################
 print("########################################################################################################################################################")
 print(f'\n\n\n\n\n\n')
 
-generate(grammar, 10)
+# generate(grammar, 10)
+extract_groups(grammar)
 
 # no_cycle_grammar, leftover_grammar = split_grammar(grammar)
 
