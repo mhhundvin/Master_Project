@@ -153,6 +153,19 @@ print(f'\n\n\n\n\n\n')
 
 # generate(grammar, 10)
 no_groups_grammar = extract_groups(grammar)
+# for k,v in no_groups_grammar.items():
+
+#     print(f'{k.to_string()}:')
+#     for alt in v:
+#         if not isinstance(alt, Sequence):
+#             alt = Sequence( [alt] )
+#         txt = ""
+#         for elem in alt.get_arg():
+#             if isinstance(elem, Group):
+#                 print(f'\n\n{txt} ++ {elem.to_string()}')
+#                 raise Exception(f'!!!!{k.to_string()} : {elem}!!!!')
+#             txt += elem.to_string()
+#         print(f'\t{txt}\n')
 
 print(f'\n\n')
 print("########################################################################################################################################################")

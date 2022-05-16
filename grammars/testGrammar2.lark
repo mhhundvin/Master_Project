@@ -49,6 +49,7 @@ assignment_statement: CNAME "=" expr
 
 
 expr: NUMBER
+    | (expr _NEWLINE expr)
     | expr "+" expr
     | expr "-" expr
     | expr "*" expr
@@ -63,7 +64,8 @@ lala : "la" ~ 1 .. 9
 
 SPACE: " "
 
-
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+COMMENT: /#[^\n]*/
 
 // From GitHub:
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
@@ -134,3 +136,8 @@ SH_COMMENT: /#[^\n]*/
 CPP_COMMENT: /\/\/[^\n]*/
 C_COMMENT: "/*" /(.|\n)*?/ "*/"
 SQL_COMMENT: /--[^\n]*/
+
+
+new_lala: "a" new_lala | du
+
+du: new_lala | "b"

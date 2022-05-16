@@ -131,7 +131,13 @@ class Optional(Generatable):
 
     def to_string(self):
         arg = self.args.get_arg()
-        return f'<{list_to_string(arg)}>?'
+        if len(arg) > 1:
+            if not isinstance(arg[1], str):
+                return f'<{list_to_string(arg)}>?'
+        if isinstance(arg[0], Generatable):
+            return f'<{arg[0].to_string()}>?'
+        return f'<{arg[0]}>?'
+        # return f'<{list_to_string(arg)}>?'
 
     def get_arg(self):
         return self.args
@@ -143,8 +149,10 @@ class Optional(Generatable):
     def generate(self):
         # print(f'\n\n\t{self.args}')
         args = self.args
-        if isinstance(args, Sequence):
+        if isinstance(args, Sequence) or isinstance(args, Group):
             args = args.get_arg()
+        if not isinstance(args, list):
+            raise Exception(f"What happend now? --> {args} <--")
         arg = random.choice(args)
         if isinstance(arg, Generatable):
             return arg.generate()
@@ -230,7 +238,7 @@ class Group(Generatable):
                 lst.append(elem)
         # print(f'\t----> lst: {lst}')
         temp = ' | '.join(lst)
-        return f'({temp})'
+        return f'(({temp}))'
     
     def get_arg(self):
         return self.args
@@ -315,7 +323,7 @@ class Nonterminal(Generatable):
         return hash(self.nonterminal)
 
     def __eq__(self, other):
-        print(f'\n\n{self.nonterminal} == {other}')
+        # print(f'\n\n{self.nonterminal} == {other}')
         return self.nonterminal == other.nonterminal
     
     def to_string(self):       

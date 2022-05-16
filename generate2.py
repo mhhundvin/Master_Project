@@ -1,29 +1,30 @@
 import random
 from collections import defaultdict
 from split_grammar import split_grammar
-from classes_3 import Generatable, Literal_Range, Nonterminal, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
+from classes_3 import Generatable, Group, Literal_Range, Nonterminal, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
 
 
 
 def generate(grammar, depth):
     no_cycle_grammar, leftover_grammar = split_grammar(grammar)
     print('The grammar is split in two')
-    
+    print('###################################################################################################################\n\n')
+
     terminal_list = defaultdict(list)
 
     for nonterminal, alternatives in grammar.items():
         # alternative = random.choice(alternatives)
         for alternative in alternatives:
-            print(f'{nonterminal.to_string()}:')#\n\t{alternative}\n')
+            # print(f'\n{nonterminal.to_string()}:\t{alternative}')#\n\t{alternative}\n')
             alternative, x = generate_nonterminal(no_cycle_grammar, leftover_grammar, alternative, depth)
             # print(x)
-            print(alternative.get_arg())
+            # print(f'\t{alternative.get_arg()}\n')
             # print(f'\t=====> {alternative}\n\t\t===> {alternative.get_arg()}')
             terminal_list[nonterminal].append(alternative)
         # print(f'TL[n]: {terminal_list[nonterminal].get_arg()}\n\n')
-        # x = input('\n\nContinue? ')
-        # if (x == "nei"):
-        #     break
+            # x = input('\n\nContinue? ')
+            # if (x == "nei"):
+            #     break
     
     print('\n\n###################################################################################################################')
     print('\t\tRemoved nonterminals?')
@@ -39,18 +40,36 @@ def generate(grammar, depth):
             print(f'\n\n{nonterminal.to_string()}:')#\n\t{alternative}\n')
             terminalt_string = ""
             for element in alternative.get_arg():
-                
+                # print(f'\t{element}')
+
                 # print(f'\t{element.to_string()}')
-                # print(f'\t{element.generate()}')
+                print(f'\t{element.generate()}')
                 
                 # print(f'\t{element}\n\t\t==> {element.to_string()}')
+
+                # if isinstance(element, Plus) or isinstance(element, Star) or isinstance(element, Optional):
+                #     element = element.get_arg()
+                
+                # if isinstance(element, Group):
+                #     raise Exception(f'WHAT!?! {nonterminal.to_string()}')
+
                 # if isinstance(element, Sequence):
-                #     print(f'\t\t{element.get_arg()}')
-                terminalt_string += element.generate()
-            print(f'\t{terminalt_string}')
-            # x = input('\n\nContinue? ')
-            # if (x == "nei"):
-            #     return
+                #     print(f'\t\t{element}: {element.get_arg()}')
+                #     for elem in element.get_arg():
+                #         if isinstance(element, Group):
+                #             raise Exception(f'WHAT!?! {nonterminal.to_string()}')
+                #         if isinstance(elem, Sequence):
+                #             print(f'\t\t\t{elem.get_arg()}')
+                # else:
+                #     print(f'\t\t{element}')
+                    
+
+            #     terminalt_string += element.generate()
+            #     print(f'\t\tso far: {terminalt_string}')
+            #     x = input('\n\nContinue? ')
+            #     if (x == "nei"):
+            #         return
+            # print(f'\n\n\t{terminalt_string}\n\n')
             
 
 
@@ -65,12 +84,16 @@ def generate_nonterminal(no_cycle_grammar, leftover_grammar, alternative, depth)
         alternative = Sequence( [alternative] )
 
     halfway = depth / 2
-    
-    while contains_nonterminal(alternative):
+    # print(f'\n\n####### {alternative.get_arg()} ###########')
+    while contains_nonterminal(alternative):  # and depth > -10:
         # print(f'\t{alternative}')
         new_alternative = []
         for element in alternative.get_arg():
-            # print(f'\t\t{element}')
+            # if isinstance(element, Generatable):
+            #     print(f'\t\t{depth} -- {element.to_string()}')
+            # else:
+            #     print(f'\t\t{depth} -- "{element}"')
+
             if isinstance(element, Nonterminal) or isinstance(element, Token):
                 depth -= 1
                 element = do_step_nonterminal(no_cycle_grammar, leftover_grammar, element, depth, halfway)
@@ -156,18 +179,37 @@ def do_step_nonterminal(no_cycle_grammar, leftover_grammar, nonterminal, depth, 
             raise Exception(f'Depth\tWhat happend? "{nonterminal}"')
         
 
-    return do_step(grammar, nonterminal)
+    return do_step(grammar, nonterminal, depth)
 
 
+# add depth parameter to not get recursive after depth == 0
+# if no such alternative exists give error
+def do_step(grammar, nonterminal, depth):
+    alternatives = grammar[nonterminal]
+    # print(f'===>{nonterminal.to_string()} : {alternatives}')
+    if depth < 0:
+        alternatives = remove_direct_recursion(alternatives, nonterminal)
+    
+    # print(f'\t===> {alternatives}')
+    alternative = random.choice(alternatives)
 
-def do_step(grammar, nonterminal):
-    temp = grammar[nonterminal]
-    # print(temp)
-    if isinstance(temp, list):
-        temp = random.choice(temp)
-    return temp
+    return alternative
 
 
+def remove_direct_recursion(alternatives, nonterminal):
+    new_alternatives = []
+    for alternative in alternatives:
+        contains_recursion = False
+        # print(f'\t\t====>{alternative.get_arg()}')
+        for element in alternative.get_arg():
+            # print(f'\t\t====>{element.to_string()}')
+
+            if isinstance(element, Nonterminal) and element == nonterminal:
+                contains_recursion = True
+        if not contains_recursion:
+            new_alternatives.append(alternative)
+
+    return new_alternatives
 
 
 def contains_nonterminal(alternative):
@@ -197,7 +239,7 @@ def contains_nonterminal(alternative):
             arg, start, stop = element.get_arg()
             if not isinstance(arg, Sequence):
                 seq = Sequence( [arg] )
-            if contains_nonterminal(seq):
+            if contains_nonterminal(arg):
                 return True
 
     return False
