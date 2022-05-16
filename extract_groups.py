@@ -9,14 +9,16 @@ def extract_groups(grammar):
         #     break
 
         for alternative in alternatives:
-            print(f'{nonterminal.to_string()}:\t{alternative}')
+            # print(f'{nonterminal.to_string()}:\t{alternative}')
             # temp = extract_group(new_grammar, nonterminal, alternative, 0)
             # print(f'\t{temp.to_string()}')
             # print(f'\t\t{new_grammar[temp][0].to_string()}')
             temp, _ = extract_group(new_grammar, nonterminal, alternative, 0)
             new_grammar[nonterminal].append(temp)
+
             # print(new_grammar.keys())
         # break
+
     print('\n##############################\n')
     for k, v in new_grammar.items():
         print(f'\n{k.to_string()}:')#\t\t\t{v}')
@@ -44,6 +46,8 @@ def extract_group(grammar, nonterminal, alternative, num):
             # print(f'==>{element}: {element.get_arg()}')
             temp, num = extract_group(grammar, nonterminal, element.get_arg(), num)
             name = Nonterminal( f'{nonterminal.to_string()}_{num}', grammar )
+            # if ("expr_stmt_0_" in name.to_string()):
+            #     raise Exception(f'{temp.get_arg()[0].get_arg()}')
             num += 1
             grammar[name] = temp.get_arg()
             new_alternative.append(name)
@@ -64,9 +68,9 @@ def extract_group(grammar, nonterminal, alternative, num):
             temp, num = extract_group(grammar, nonterminal, arg, num)
             new_alternative.append( Repeat( temp, start, stop ))
 
-        # elif isinstance(element, Sequence):
-        #     temp, num = extract_group(grammar, nonterminal, element.get_arg(), num)
-        #     new_alternative.append( Sequence( temp ))
+        elif isinstance(element, Sequence):
+            temp, num = extract_group(grammar, nonterminal, element.get_arg(), num)
+            new_alternative.append( temp )
             
 
         else:
