@@ -31,19 +31,20 @@ def generate(grammar, depth):
     print('###################################################################################################################\n\n')
 
     for nonterminal, alternatives in terminal_list.items():
-        
-        if nonterminal.to_string() == "DIGIT":
-            break
+        if nonterminal.to_string()[0] == "$":
+            continue
+        # if nonterminal.to_string() == "DIGIT":
+        #     break
 
         # print(f'\n\n{nonterminal.to_string()}:')#\n\t{alternative}\n')
         for alternative in alternatives:
-            print(f'\n\n{nonterminal.to_string()}:')#\n\t{alternative}\n')
+            print(f'\n{nonterminal.to_string()}:')#\n\t{alternative}\n')
             terminalt_string = ""
             for element in alternative.get_arg():
                 # print(f'\t{element}')
 
                 # print(f'\t{element.to_string()}')
-                print(f'\t{element.generate()}')
+                # print(f'\t{element.generate()}')
                 
                 # print(f'\t{element}\n\t\t==> {element.to_string()}')
 
@@ -64,12 +65,12 @@ def generate(grammar, depth):
                 #     print(f'\t\t{element}')
                     
 
-            #     terminalt_string += element.generate()
+                terminalt_string += element.generate()
             #     print(f'\t\tso far: {terminalt_string}')
             #     x = input('\n\nContinue? ')
             #     if (x == "nei"):
             #         return
-            # print(f'\n\n\t{terminalt_string}\n\n')
+            print(f'\t{terminalt_string}\n')
             
 
 
@@ -107,9 +108,21 @@ def generate_nonterminal(no_cycle_grammar, leftover_grammar, alternative, depth)
                     new_alternative.append(Star( element ) )
             elif isinstance(element, Plus):
                 depth -= 1
+                # print(f'\n\n\t=====> {element.to_string()}')
+                # print(f'\t=====> {element.get_arg().to_string()}')
                 element, depth = generate_nonterminal(no_cycle_grammar, leftover_grammar, element.get_arg(), depth)
                 if element:
-                    new_alternative.append(Plus( element ) )
+                    # print(f'\t=====> {element.to_string()}')
+                    temp = Plus( element )
+                    # x = element.get_arg()[0] #temp.get_arg().get_arg()[0]
+                    # i = 0 
+                    # while isinstance(x, Sequence):
+                    #     print(i)
+                    #     i+=1
+                    #     x = x.get_arg()
+                    # print(f'\t=====> {x}')
+                    # print(f'\t=====> {temp.to_string()}\n\n')
+                    new_alternative.append( temp )
             elif isinstance(element, Optional):
                 depth -= 1
                 element, depth = generate_nonterminal(no_cycle_grammar, leftover_grammar, element.get_arg(), depth)
@@ -128,6 +141,9 @@ def generate_nonterminal(no_cycle_grammar, leftover_grammar, alternative, depth)
                 element, depth = generate_nonterminal(no_cycle_grammar, leftover_grammar, arg, depth)
                 if element:
                     new_alternative.append(Repeat( element, start, stop ) )
+            
+            
+            
             # elif isinstance(element, Literal_Range):
             #     depth -= 1
             #     start, stop = element.get_arg()
@@ -204,7 +220,7 @@ def remove_direct_recursion(alternatives, nonterminal):
         for element in alternative.get_arg():
             # print(f'\t\t====>{element.to_string()}')
 
-            if isinstance(element, Nonterminal) and element == nonterminal:
+            if isinstance(element, type(nonterminal)) and element == nonterminal:
                 contains_recursion = True
         if not contains_recursion:
             new_alternatives.append(alternative)
