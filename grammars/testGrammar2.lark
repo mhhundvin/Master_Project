@@ -137,6 +137,7 @@ CPP_COMMENT: /\/\/[^\n]*/
 C_COMMENT: "/*" /(.|\n)*?/ "*/"
 SQL_COMMENT: /--[^\n]*/
 
+NAME: /[a-zA-Z_]\w*/
 
 new_lala: "a" new_lala | du
 

@@ -99,7 +99,8 @@ UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 WORD: LETTER+
 
-CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+// CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+CNAME: (LETTER|DIGIT)*
 
 
 //
@@ -118,3 +119,5 @@ SH_COMMENT: /#[^\n]*/
 CPP_COMMENT: /\/\/[^\n]*/
 C_COMMENT: "/*" /(.|\n)*?/ "*/"
 SQL_COMMENT: /--[^\n]*/
+
+NAME: /[a-zA-Z_]\w*/

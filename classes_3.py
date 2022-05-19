@@ -13,6 +13,32 @@ from distutils.log import error
 import random
 from tracemalloc import start, stop
 import exrex
+import numpy as np
+import re
+
+def draw_random_normal_int(low:int, high:int):
+
+    # generate a random normal number (float)
+    normal = np.random.normal(loc=0, scale=1, size=1)
+
+    # clip to -3, 3 (where the bell with mean 0 and std 1 is very close to zero
+    # normal = -3 if normal < -3 else normal
+    # normal = 3 if normal > 3 else normal
+
+    # scale range of 6 (-3..3) to range of low-high
+    # scaling_factor = (high-low) / 6
+    # normal_scaled = normal * scaling_factor
+
+    # center around mean of range of low high
+    # normal_scaled += low + (high-low)/2
+
+    # then round and return
+    # temp = np.round(normal)#_scaled)
+    # print(temp)
+    # return int(temp[0])
+    temp = random.randint(low, high)
+    # print(temp)
+    return temp
 
 def to_simple_list(lst):
     new_lst = []
@@ -74,7 +100,7 @@ class Literal_Range(Generatable):
         return self.generate() 
 
     def generate(self):
-        temp = f'[{self.start.generate()}-{self.stop.generate()}]'*3
+        temp = f'[{self.start.generate()}-{self.stop.generate()}]'
         # print(f'LITERAL RANGE: {temp}')
         return exrex.getone(temp)
 
@@ -85,7 +111,7 @@ class Literal_Range(Generatable):
 
 # expr_range
 class Repeat(Generatable):
-    def __init__(self, args, start=0, stop=random.randint(1,3)):
+    def __init__(self, args, start, stop):
         self.args = args
         self.start = start
         self.stop = stop
@@ -181,7 +207,7 @@ class Star(Generatable):
     def generate(self):
         arg = self.args
         terminal_string = ''
-        for _ in range(0, random.randint(0,3)):
+        for _ in range(0, draw_random_normal_int(0,9)):
             # print(arg)
             terminal_string += arg.generate()
         return terminal_string
@@ -213,7 +239,7 @@ class Plus(Generatable):
         if isinstance(arg, list):
             arg = arg[0]
         terminal_string = ''
-        for _ in range(0, random.randint(1,3)):
+        for _ in range(0, draw_random_normal_int(1,9)):
             terminal_string += arg.generate()
         return terminal_string
 
@@ -296,6 +322,9 @@ class Regexp(Generatable):
     def __init__(self, args):
         self.args = args
 
+    def set_name(self, name):
+        self.name = name
+
     def to_string(self):
         return self.args
     
@@ -304,8 +333,52 @@ class Regexp(Generatable):
         return self.generate()
     
     def generate(self):
-        words = ["apple", "banana", "cherry"]
-        return random.choice(words)
+        # words = ["apple", "banana", "cherry"]
+        # return random.choice(words)
+        name = self.name.to_string()
+        regexp = self.args[1:-1]
+        # print(self.args)
+        # print(regexp)
+        if "comment" in name.lower():
+            txt = ""
+            for e in regexp:
+                if e == "\\":
+                    continue
+                elif e =="[":
+                    break
+                txt += e
+            temp = f'{txt}(?=\[)'
+            new_regexp = regexp.replace("\\", '')
+            m = re.search(temp, new_regexp)
+            if m:
+                return f'{txt} This is a comment'
+            return "This is a comment"
+
+        elif "name" in name.lower() or "var" in name.lower():
+            variables = ['variable_0', 'variable_1', 'variable_2', 'variable_3', 'variable_4', 'variable_5', 'variable_6', 'variable_7', 'variable_8', 'variable_9']
+            var = random.choice(variables)
+            if re.fullmatch(regexp, var):
+                return var
+
+        
+        txt = ""
+        with open("text.txt", 'r') as f:
+            for line in f.readlines():
+                txt += line
+        
+        # pattern = re.compile(regexp)
+        # m = pattern.search(txt)
+        m = re.search(regexp, txt)
+        # print(f'\tregexp: {regexp}\t\t==>{m}')
+        if m:
+            # tup = m.span()
+            # print(f'\t\t{tup} ==> {m.group(0)} LALA')#{txt[tup[0]:tup[1]]}')
+            return m.group(0)
+
+
+
+        return name
+
 
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
