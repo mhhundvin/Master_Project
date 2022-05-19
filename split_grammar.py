@@ -48,10 +48,10 @@ def split_grammar(grammar):
                 if multiple_options:
                     if new_alternative:
                         new_alternative = Sequence( new_alternative )
-                        if new_alternative.contains_cycle(nonterminal, [], grammar):
-                            leftover_grammar[nonterminal].append(new_alternative)
-                        else:
+                        if not new_alternative.contains_cycle(nonterminal, [], grammar):
                             no_cycle_grammar[nonterminal].append(new_alternative)
+                        else:
+                            leftover_grammar[nonterminal].append(new_alternative)
                     leftover_grammar[nonterminal].append(alternative)
                 else:
                     # print(f'\n\n{nonterminal.to_string()}: {alternative}\n\n')
