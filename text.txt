@@ -6,3 +6,46 @@ again. She asks him to do something one time, and she doesn't ask again.
 Billy is a good boy. He does what his mother asks the first time. She
 doesn't have to ask again. She tells Billy, "You are my best child." Of
 course Billy is her best child. Billy is her only child.
+
+0	0b00000011	0x0
+1	0b00000001	0x1
+2	0b00000010	0x2
+3	0b00000011	0x3
+4	0b00000100	0x4
+5	0b00000101	0x5
+6	0b00000110	0x6
+7	0b00000111	0x7
+8	0b00001000	0x8
+9	0b00001001	0x9
+10	0b00001010	0xA
+11	0b00001011	0xB
+12	0b00001100	0xC
+13	0b00001101	0xD
+14	0b00001110	0xE
+15	0b00001111	0xF
+
+0o000
+0o001
+0o002
+0o003
+0o004
+0o005
+0o006
+0o007
+0o010
+0o011
+0o012
+0o013
+0o014
+0o015
+0o016
+0o017
+
+3.14159265359
+
+5j
+
+4.2
+
+6.666
+

@@ -206,6 +206,7 @@ class Star(Generatable):
     
     def generate(self):
         arg = self.args
+        # print(f'\t==>STAR( {arg} )\n')
         terminal_string = ''
         for _ in range(0, draw_random_normal_int(0,9)):
             # print(arg)
@@ -234,12 +235,21 @@ class Plus(Generatable):
     def generate_shortest(self, transformed_grammar):
         return self.args.generate_shortest(transformed_grammar)
     
+    # def generate(self):
+    #     arg = self.args
+    #     if isinstance(arg, list):
+    #         arg = arg[0]
+    #     terminal_string = ''
+    #     for _ in range(0, draw_random_normal_int(1,9)):
+    #         terminal_string += arg.generate()
+    #     return terminal_string
+    
     def generate(self):
         arg = self.args
-        if isinstance(arg, list):
-            arg = arg[0]
+        # print(f'\t==>PULS( {arg} )\n')
         terminal_string = ''
         for _ in range(0, draw_random_normal_int(1,9)):
+            # print(arg)
             terminal_string += arg.generate()
         return terminal_string
 
@@ -304,6 +314,42 @@ class Sequence(Generatable):
         terminal_string = ''
         for elem in self.args:
             terminal_string += elem.generate()
+            if terminal_string[-1] != " " and not isinstance(elem, Token):
+                terminal_string += " "
+        return terminal_string
+
+    def contains_cycle(self, nonterminal, visited, grammar):
+        args = self.args
+        for elem in args:
+            if isinstance(elem, list):
+                # print(f'----> SEQUENCE: {elem}')
+                elem = elem[0]
+            if elem.contains_cycle(nonterminal, visited, grammar):
+                return True
+        return False
+
+#####################################################################################
+
+class One_word(Generatable):
+    def __init__(self, args):
+        self.args = args
+
+    def to_string(self):
+        return list_to_string(self.args)
+
+    def get_arg(self):
+        return self.args
+    
+    def generate_shortest(self, transformed_grammar):
+        terminal_string = ''
+        for elem in self.args:
+            terminal_string += elem.generate_shortest(transformed_grammar)
+        return terminal_string
+    
+    def generate(self):
+        terminal_string = ''
+        for elem in self.args:
+            terminal_string += elem.generate()
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
@@ -333,12 +379,14 @@ class Regexp(Generatable):
         return self.generate()
     
     def generate(self):
-        # words = ["apple", "banana", "cherry"]
-        # return random.choice(words)
         name = self.name.to_string()
-        regexp = self.args[1:-1]
-        # print(self.args)
-        # print(regexp)
+        regexp = self.args
+        # if regexp[-1] == "i":
+        #     regexp = regexp[1:-2]
+        # else:
+        regexp = regexp[1:-1]
+    
+        # print(f'{self.args} ==> {regexp}')
         if "comment" in name.lower():
             txt = ""
             for e in regexp:
@@ -365,19 +413,19 @@ class Regexp(Generatable):
         with open("text.txt", 'r') as f:
             for line in f.readlines():
                 txt += line
-        
-        # pattern = re.compile(regexp)
-        # m = pattern.search(txt)
-        m = re.search(regexp, txt)
-        # print(f'\tregexp: {regexp}\t\t==>{m}')
+        m = re.findall(regexp, txt)
+        # m = re.search(regexp, txt)
         if m:
-            # tup = m.span()
-            # print(f'\t\t{tup} ==> {m.group(0)} LALA')#{txt[tup[0]:tup[1]]}')
-            return m.group(0)
+            m = random.choice(m)
+            if isinstance(m, tuple):
+                return f'{m[0]}'
+            return f'{m}'
+
+            # return m.group()
 
 
-
-        return name
+        return exrex.getone(regexp)
+        # return name
 
 
     def contains_cycle(self, nonterminal, visited, grammar):

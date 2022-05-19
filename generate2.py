@@ -33,13 +33,13 @@ def generate(grammar, depth):
     for nonterminal, alternatives in terminal_list.items():
         if nonterminal.to_string()[0] == "$":
             continue
-        # if nonterminal.to_string() == "DIGIT":
-        #     break
+        if nonterminal.to_string() == "DIGIT":
+            break
 
         # print(f'\n\n{nonterminal.to_string()}:')#\n\t{alternative}\n')
         for alternative in alternatives:
             print(f'\n{nonterminal.to_string()}:')#\n\t{alternative}\n')
-            terminalt_string = ""
+            terminal_string = ""
             for element in alternative.get_arg():
                 # print(f'\t{element}')
 
@@ -65,12 +65,13 @@ def generate(grammar, depth):
                 #     print(f'\t\t{element}')
                     
 
-                terminalt_string += element.generate()
+                terminal_string += element.generate()
+
             #     print(f'\t\tso far: {terminalt_string}')
             #     x = input('\n\nContinue? ')
             #     if (x == "nei"):
             #         return
-            print(f'\t{terminalt_string}\n')
+            print(f'\t{terminal_string}\n')
             
 
 

@@ -1,7 +1,9 @@
 
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
-program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
+program: "program" CNAME "{" variable_decl+ statement+ "}"
+// program: "program" CNAME "{" (LF TAB variable_decl)+ (LF TAB statement)+ LF "}"
+// program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
 
 
@@ -19,7 +21,9 @@ statement: while_statement
 
 
 
+// while_statement: "while" "(" expr ")" "{" (LF TAB statement)* LF "}"
 while_statement: "while" "(" expr ")" "{" statement* "}"
+
             //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
 // statement_2: statement_3
 // statement_3: "HELLOA"//while_statement
@@ -31,6 +35,7 @@ while_statement: "while" "(" expr ")" "{" statement* "}"
 
 
 
+// if_then_statement: "if" "(" expr ")" "{" (LF TAB statement)* LF "}"
 if_then_statement: "if" "(" expr ")" "{" statement* "}"
 
 
@@ -69,7 +74,7 @@ SPACE: " "
 DIGIT: "0".."9"
 HEXDIGIT: "a".."f"|"A".."F"|DIGIT
 
-INT: DIGIT+
+INT: DIGIT+ //| DIGIT | DIGIT*
 SIGNED_INT: ["+"|"-"] INT
 DECIMAL: INT "." INT? | "." INT
 
@@ -99,8 +104,8 @@ UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 WORD: LETTER+
 
-// CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
-CNAME: (LETTER|DIGIT)*
+CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+// CNAME: (LETTER|DIGIT)*
 
 
 //
@@ -121,3 +126,15 @@ C_COMMENT: "/*" /(.|\n)*?/ "*/"
 SQL_COMMENT: /--[^\n]*/
 
 NAME: /[a-zA-Z_]\w*/
+
+STRING : /[A-Za-z]+/        // /[ubf]?r?("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
+LONG_STRING: /[A-Za-z]+/    // /[ubf]?r?(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?''')/is
+
+DEC_NUMBER: /0|[1-9]\d*/
+HEX_NUMBER.2: /0x[\da-f]*/
+OCT_NUMBER.2: /0o[0-7]*/
+BIN_NUMBER.2 : /0b[0-1]*/
+FLOAT_NUMBER.2: /((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+))/
+IMAG_NUMBER.2: /\d+j/ | FLOAT_NUMBER "j"
+
+TAB: /\t/
