@@ -1,6 +1,6 @@
 from collections import defaultdict
 from unicodedata import name
-from classes_3 import Group, Nonterminal, Sequence, Plus, Star, Optional, Literal_Range, Repeat
+from classes_3 import Group, Regexp, Nonterminal, Sequence, Plus, Star, Optional, Literal_Range, Repeat
 
 def extract_groups(grammar):
     new_grammar = defaultdict(list)
@@ -45,7 +45,7 @@ def extract_group(grammar, nonterminal, alternative, num):
         if isinstance(element, Group):
             # print(f'==>{element}: {element.get_arg()}')
             temp, num = extract_group(grammar, nonterminal, element.get_arg(), num)
-            name = Nonterminal( f'{nonterminal.to_string()}_{num}', grammar )
+            name = Nonterminal( f'$$$_{nonterminal.to_string()}_{num}', grammar )
             # if ("expr_stmt_0_" in name.to_string()):
             #     raise Exception(f'{temp.get_arg()[0].get_arg()}')
             num += 1
@@ -75,6 +75,10 @@ def extract_group(grammar, nonterminal, alternative, num):
 
         else:
             new_alternative.append(element)
+
+        if isinstance(element, Regexp):
+            element.set_name(nonterminal)
+            
     # grammar[nonterminal].append(Sequence( new_alternative ))
     # return "no Group"
     # print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
