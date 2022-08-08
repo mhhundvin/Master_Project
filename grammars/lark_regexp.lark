@@ -1,0 +1,75 @@
+// %import common (INT, DECIMAL)
+
+start: regex
+
+regex: "/" regex_ere "/"
+
+regex_ere: rex ~ 1..20
+
+rex: LETTER
+   | range
+   | rex repetition
+   | rex "|" rex
+   | ( "(" rex ")" | "\\" DECIMAL)
+   | ESCAPED_SYMBOL
+   //make own rule for group
+   | "(" rex+ ")"
+   | look
+
+
+repetition: "*" | "+" | "?"
+		  | "{" INT "}"
+          | "{" INT "," "}"
+          | "{" "," INT"}"
+          | "{" INT "," INT "}"
+
+range: "[" "^"? range_elt* "$"? "]"
+
+range_elt: LETTER
+         | LETTER "-" LETTER
+         | ESCAPED_SYMBOL
+         | P_ELEMENT
+
+look: "(?=" regex_ere ")"
+    | "(?!" regex_ere ")"
+    | "(?<=" regex_ere ")"
+    | "(?<!" regex_ere ")"
+
+// lookahead: "(?=" regex_ere ")"
+// negative_lookahead: "(?!" regex_ere ")"
+// positive_lookbehind: "(?<=" regex_ere ")"
+// negative_lookbehind: "(?<!" regex_ere ")"
+
+
+ESCAPED_SYMBOL: "\\" SYMBOL
+
+SYMBOL: "w" | "W" | "<" | ">" | "b" | "B" | "`" | "'" | "r" | "n"
+      | "d" | "D" | "A" | "s" | "S" | "Z" | "number"
+      | "a" | "f" | "N" | "t" | "u" | "U" | "x" 
+      | "." | "/" | "*" | "\\" 
+
+
+LETTER: /[0-9a-zA-Z_+-]/
+
+
+
+
+
+P_ELEMENT: "\\p{Lu}"
+         | "\\p{Ll}"
+         | "\\p{Lt}"
+         | "\\p{Lm}"
+         | "\\p{Lo}"
+         | "\\p{Nl}"
+         | "\\p{Mn}"
+         | "\\p{Mc}"
+         | "\\p{Nd}"
+         | "\\p{Pc}"
+         
+ 
+// common:
+DIGIT: "0".."9"
+INT: DIGIT+
+DECIMAL: INT "." INT? | "." INT
+
+

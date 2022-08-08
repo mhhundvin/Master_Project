@@ -175,10 +175,10 @@ class Optional(Generatable):
     def generate(self):
         # print(f'\n\n\t{self.args}')
         args = self.args
-        if isinstance(args, Sequence) or isinstance(args, Group):
+        if isinstance(args, Sequence) or isinstance(args, Group) or isinstance(args, One_word):
             args = args.get_arg()
         if not isinstance(args, list):
-            raise Exception(f"What happend now? --> {args} <--")
+            raise Exception(f'What happend now? --> {args} <--')
         arg = random.choice(args)
         if isinstance(arg, Generatable):
             return arg.generate()
@@ -314,7 +314,7 @@ class Sequence(Generatable):
         terminal_string = ''
         for elem in self.args:
             terminal_string += elem.generate()
-            if terminal_string[-1] != " " and not isinstance(elem, Token):
+            if terminal_string and terminal_string[-1] != " " and not isinstance(elem, Token):
                 terminal_string += " "
         return terminal_string
 
@@ -397,6 +397,7 @@ class Regexp(Generatable):
                 txt += e
             temp = f'{txt}(?=\[)'
             new_regexp = regexp.replace("\\", '')
+            print(f'\n\t==>{new_regexp}\n\t==>{temp}')
             m = re.search(temp, new_regexp)
             if m:
                 return f'{txt} This is a comment'

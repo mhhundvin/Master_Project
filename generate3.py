@@ -25,8 +25,8 @@ def generate(grammar, depth):
         # if nonterminal.to_string() != "CNAME" and nonterminal.to_string() != "variable_decl":
         if nonterminal.to_string()[0] == "$":
             continue
-        if nonterminal.to_string() == "DIGIT":
-            break
+        # if nonterminal.to_string() == "DIGIT":
+        #     break
 
         for alternative in alternatives:
             print(f'------------------------------\n{nonterminal.to_string()}:\n')
@@ -38,7 +38,7 @@ def generate(grammar, depth):
                 # if not isinstance(element, Terminal):
                 #     print(f'\t\t=>{element.get_arg()}')
                 terminal_string += element.generate()
-                if terminal_string[-1] != " " and not isinstance(element, Token):
+                if terminal_string and terminal_string[-1] != " " and not isinstance(element, Token):
                     terminal_string += " "
 
             print(f'{terminal_string}\n------------------------------\n\n')
@@ -184,6 +184,9 @@ def remove_direct_recursion(alternatives, nonterminal):
 
 
 def contains_nonterminal(alternative):
+    if isinstance(alternative, list):
+        alternative = Sequence( alternative )
+
     if not isinstance(alternative, Sequence) and not isinstance(alternative, One_word):
         raise Exception(f'This, {alternative}, is supposed to be a Sequence.')
 
@@ -196,6 +199,14 @@ def contains_nonterminal(alternative):
         elif isinstance(element, Sequence):
             if contains_nonterminal(element):
                 return True
+        # elif isinstance(element, One_word):
+        #     # x = input(f'continue? {element.get_arg()}')
+        #     # if x == "nei":
+        #         # continue
+        #     if contains_nonterminal(element.get_arg()):
+        #         # print(f"LALALLALA")
+        #         return True
+        #     # print("NEXTNEXTNEXT")
             
         elif isinstance(element, Plus) or isinstance(element, Star) or isinstance(element, Optional):
             if isinstance(element.get_arg(), Sequence):

@@ -21,8 +21,8 @@ statement: while_statement
 
 
 
-// while_statement: "while" "(" expr ")" "{" (LF TAB statement)* LF "}"
-while_statement: "while" "(" expr ")" "{" statement* "}"
+while_statement: "while" "(" expr ")" "{" (LF TAB statement)* LF "}"
+// while_statement: "while" "(" expr ")" "{" statement* "}"
 
             //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
 // statement_2: statement_3
@@ -35,8 +35,8 @@ while_statement: "while" "(" expr ")" "{" statement* "}"
 
 
 
-// if_then_statement: "if" "(" expr ")" "{" (LF TAB statement)* LF "}"
-if_then_statement: "if" "(" expr ")" "{" statement* "}"
+if_then_statement: "if" "(" expr ")" "{" (LF TAB statement)* LF "}"
+// if_then_statement: "if" "(" expr ")" "{" statement* "}"
 
 
 

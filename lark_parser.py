@@ -9,4 +9,4 @@ test_grammar = open('grammars/testGrammar.lark').read()
 
 parser = Lark(larkGrammar)
 
-tree = parser.parse(test_grammar)
+tree = parser.parse(verilog_grammar)
