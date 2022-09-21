@@ -68,7 +68,21 @@ def list_to_string(lst):
 #####################################################################################
 
 class Generatable():
-    pass
+    def to_string(self):
+        """Returnes the original format for the given element."""
+        pass
+
+    def get_arg(self):
+        """Returnes the arguments of the element."""
+        pass
+
+    def generate(self):
+        """Generates terminal string from the arguments for the element."""
+        pass
+
+    def contains_cycle(self, nonterminal, visited, grammar):
+        """Returnes ture or false based on weather or not the arguments contains a path to the given nonterminal."""
+        pass
 
 #####################################################################################
 
