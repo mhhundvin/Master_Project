@@ -57,7 +57,7 @@ expr: NUMBER
 
 
 
-SPACE: " "
+
 
 
 
@@ -72,6 +72,9 @@ SPACE: " "
 //
 
 DIGIT: "0".."9"
+
+SPACE: " "
+
 HEXDIGIT: "a".."f"|"A".."F"|DIGIT
 
 INT: DIGIT+ //| DIGIT | DIGIT*

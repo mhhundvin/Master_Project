@@ -66,10 +66,8 @@ expr: NUMBER
 
 // lala : "la" ~ 1 .. 9
 
-SPACE: " "
 
-_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
-COMMENT: /#[^\n]*/
+
 
 // From GitHub:
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
@@ -82,6 +80,14 @@ COMMENT: /#[^\n]*/
 //
 
 DIGIT: "0".."9"
+
+//////////////////
+SPACE: " "
+
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+COMMENT: /#[^\n]*/
+////////////////////
+
 HEXDIGIT: "a".."f"|"A".."F"|DIGIT
 
 INT: DIGIT+
