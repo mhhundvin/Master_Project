@@ -6,7 +6,8 @@ hedy_grammar = open('grammars/hedy/level1.lark', 'r').read()
 verilog_grammar = open('grammars/verilog.lark').read()
 python_grammar = open('grammars/python3.lark').read()
 test_grammar = open('grammars/testGrammar.lark').read()
+test_grammar2 = open('grammars/testGrammar2.lark').read()
 
 parser = Lark(larkGrammar)
 
-tree = parser.parse(verilog_grammar)
+tree = parser.parse(test_grammar2)

@@ -167,7 +167,7 @@ def generate_nonterminal(no_cycle_grammar, leftover_grammar, alternative, depth)
 
 
 
-
+# Choose grammar based on depth\
 def do_step_nonterminal(no_cycle_grammar, leftover_grammar, nonterminal, depth, halfway):
     if depth > halfway:
         if nonterminal in leftover_grammar.keys():

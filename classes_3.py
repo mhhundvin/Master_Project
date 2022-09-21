@@ -314,8 +314,8 @@ class Sequence(Generatable):
         terminal_string = ''
         for elem in self.args:
             terminal_string += elem.generate()
-            if terminal_string and terminal_string[-1] != " " and not isinstance(elem, Token):
-                terminal_string += " "
+            # if terminal_string and terminal_string[-1] != " " and not isinstance(elem, Token):
+            #     terminal_string += " "
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
@@ -387,27 +387,54 @@ class Regexp(Generatable):
         regexp = regexp[1:-1]
     
         # print(f'{self.args} ==> {regexp}')
+        prev = False
         if "comment" in name.lower():
-            txt = ""
-            for e in regexp:
-                if e == "\\":
-                    continue
-                elif e =="[":
-                    break
-                txt += e
-            temp = f'{txt}(?=\[)'
-            new_regexp = regexp.replace("\\", '')
-            print(f'\n\t==>{new_regexp}\n\t==>{temp}')
-            m = re.search(temp, new_regexp)
-            if m:
-                return f'{txt} This is a comment'
-            return "This is a comment"
+            # txt = ""
+            # for  e in regexp:
+            # # for e in regexp:
+            #     if prev:
+            #         txt += f'\{e}'
+            #         continue
+            #     if e == "\\":
+            #         prev = True
+            #         continue
+            #     else:
+            #         prev = False
+            #     # elif e =="[":
+            #     #     break
+            #     txt += e
+            # temp = f'{regexp}(?=\[)'
+            # new_regexp = regexp.replace("\\", '')
+            # print(f'\n\t==>{new_regexp}\n\t==>{temp}')
+            # m = re.search(temp, regexp)
+            # if m:
+            #     return f'{txt} This is a comment'
+            # return "This is a comment"
+            comments = [
+                "/* This is a comment */",
+                "// This is a comment",
+                "# This is a comment",
+                "# This is a\n# comment",
+                "% This is a\n# comment",
+                "-- This is a comment",
+                "- - This is a comment",
+                "{- This is a comment -}",
+                "=begin\nThis is a comment\n=end",
+                "<!--  This is a comment -->",
+                "This is a comment"
+            ]
+            for c in comments:
+                if re.fullmatch(regexp, c):
+                    return c
 
-        elif "name" in name.lower() or "var" in name.lower():
+        elif "name" in name.lower() or "var" in name.lower() or "identifier" in name.lower():
             variables = ['variable_0', 'variable_1', 'variable_2', 'variable_3', 'variable_4', 'variable_5', 'variable_6', 'variable_7', 'variable_8', 'variable_9']
-            var = random.choice(variables)
-            if re.fullmatch(regexp, var):
-                return var
+            # var = random.choice(variables)
+            # while re.fullmatch(regexp, var) == None:
+            #     var = random.choice(variables)
+            for var in variables:
+                if re.fullmatch(regexp, var):
+                    return var
 
         
         txt = ""

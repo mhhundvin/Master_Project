@@ -16,6 +16,8 @@ def generate(grammar, depth):
         for alternative in alternatives:
             alternative, x = generate_nonterminal(no_cycle_grammar, leftover_grammar, nonterminal, alternative, depth)
             terminal_list[nonterminal].append(alternative)
+
+    input("continue?")
     
     print('\n\n###################################################################################################################')
     print('\t\tGenerating Starts Here')
@@ -25,10 +27,11 @@ def generate(grammar, depth):
         # if nonterminal.to_string() != "CNAME" and nonterminal.to_string() != "variable_decl":
         if nonterminal.to_string()[0] == "$":
             continue
-        # if nonterminal.to_string() == "DIGIT":
-        #     break
+        if nonterminal.to_string() == "DIGIT":
+            break
 
         for alternative in alternatives:
+            # input("continue?\n")
             print(f'------------------------------\n{nonterminal.to_string()}:\n')
 
             terminal_string = ""
@@ -38,8 +41,8 @@ def generate(grammar, depth):
                 # if not isinstance(element, Terminal):
                 #     print(f'\t\t=>{element.get_arg()}')
                 terminal_string += element.generate()
-                if terminal_string and terminal_string[-1] != " " and not isinstance(element, Token):
-                    terminal_string += " "
+                # if terminal_string and terminal_string[-1] != " " and not isinstance(element, Token):
+                #     terminal_string += " "
 
             print(f'{terminal_string}\n------------------------------\n\n')
             
@@ -47,7 +50,7 @@ def generate(grammar, depth):
 
 
 
-
+# RENAME to inline_nonterminal?
 def generate_nonterminal(no_cycle_grammar, leftover_grammar, nonterminal, alternative, depth):
   
     if not isinstance(alternative, Sequence):
