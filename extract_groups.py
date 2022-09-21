@@ -1,6 +1,6 @@
 from collections import defaultdict
 from unicodedata import name
-from classes_3 import Group, Regexp, Nonterminal, Token, Sequence, Plus, Star, Optional, Literal_Range, Repeat
+from classes import Group, Regexp, Nonterminal, Token, Sequence, Plus, Star, Optional, Literal_Range, Repeat
 
 def extract_groups(grammar):
     new_grammar = defaultdict(list)

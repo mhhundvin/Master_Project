@@ -3,9 +3,9 @@ from random import choice
 from lark import Transformer
 from collections import defaultdict
 from lark_parser import tree
-from classes_3 import Generatable, Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
+from classes import Generatable, Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
 from split_grammar import split_grammar
-from generate3 import generate
+from generate import generate
 from extract_groups import extract_groups
 
 grammar = defaultdict(list)

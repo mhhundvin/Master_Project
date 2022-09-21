@@ -1,5 +1,5 @@
 from collections import defaultdict
-from classes_3 import Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
+from classes import Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
 
 def split_grammar(grammar):
     no_cycle_grammar = defaultdict(list)

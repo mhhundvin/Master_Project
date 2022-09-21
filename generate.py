@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from split_grammar import split_grammar
-from classes_3 import Generatable, Group, Literal_Range, Nonterminal, One_word, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
+from classes import Generatable, Group, Literal_Range, Nonterminal, One_word, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
 
 
 
