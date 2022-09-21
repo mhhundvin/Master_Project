@@ -18,7 +18,7 @@ import re
 
 
 txt = ""
-with open("text.txt", 'r') as f:
+with open("regexp_text.txt", 'r') as f:
     for line in f.readlines():
         txt += line
 # re.purge()

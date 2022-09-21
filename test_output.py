@@ -15,6 +15,8 @@ output = "print You are my best child"
 
 output = "if ( 38 ) { print 5843; print 134433; print 9556064; print 3607207; print 20; print 3357629; print 017357182; print 6; print 9173;  }"
 
+output = "while ( 51 / 197 ) { print 483; print 214323371; print 20578; print 89; print 56852565; print 554923513; print 20059492; print 9307; print 36258;  }"
+
 # output = output.replace(' ', '')
 
 

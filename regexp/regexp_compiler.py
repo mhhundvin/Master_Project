@@ -1,6 +1,6 @@
 from lark import Transformer
-from regexp_parser import tree
-from regexp_classes import P_element, Letter, Symbol, Escaped_symbol, Look, Range_elt, Range, Repetition, Rex, Regex_ere
+from regexp_compiler.regexp_parser import tree
+from regexp_compiler.regexp_classes import P_element, Letter, Symbol, Escaped_symbol, Look, Range_elt, Range, Repetition, Rex, Regex_ere
 
 divided_regexp = []
 
