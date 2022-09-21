@@ -2,17 +2,21 @@
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
 // test: num+ "+" ("123" | (a))?
-lala_test : ("la" | test) ~ 1 .. 9
-test: (num | "abc")? "+"
+// lala_test : ("la" | test) ~ 1 .. 9
+// test: (num | "abc")? "+"
+start: program
+     | variable_decl
+     | statement
+     | expr
 
-program: "program" SPACE CNAME SPACE "{" variable_decl SPACE statement "}"
+program: "program" SPACE CNAME SPACE "{" SPACE (variable_decl ";" SPACE)+ (statement ";" SPACE)+ "}"
 
-c: variable_decl SPACE
-b: statement SPACE
+// c: variable_decl SPACE
+// b: statement SPACE
 
-variable_decl: "var" CNAME
-             | "let" CNAME
-             | "const" CNAME
+variable_decl: "var" SPACE CNAME
+             | "let" SPACE CNAME
+             | "const" SPACE CNAME
 
 
 
@@ -24,7 +28,7 @@ statement: while_statement
 
 
 
-while_statement: "while" "(" expr ")" "{" statement* "}"
+while_statement: "while" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
             //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
 // statement_2: statement_3
 // statement_3: "HELLOA"//while_statement
@@ -36,31 +40,31 @@ while_statement: "while" "(" expr ")" "{" statement* "}"
 
 
 
-if_then_statement: "if" "(" expr ")" "{" statement* "}"
+if_then_statement: "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
 
 
 
-print_statement: "print" expr
+print_statement: "print" SPACE expr
 
 
 
-assignment_statement: CNAME "=" expr
+assignment_statement: CNAME SPACE "=" SPACE expr
 
 
 
 expr: NUMBER
     | (expr _NEWLINE expr)
-    | expr "+" expr
-    | expr "-" expr
-    | expr "*" expr
-    | expr "/" expr
+    | expr SPACE "+" SPACE expr
+    | expr SPACE "-" SPACE expr
+    | expr SPACE "*" SPACE expr
+    | expr SPACE "/" SPACE expr
     | "(" expr ")"
-    | num+ "+" num*
+    // | num+ "+" num*
 
-num : a* ".0" num? "x"
-a : "1"* | "2"*
+// num : a* ".0" num? "x"
+// a : "1"* | "2"*
 
-lala : "la" ~ 1 .. 9
+// lala : "la" ~ 1 .. 9
 
 SPACE: " "
 
@@ -89,7 +93,6 @@ _EXP: EXP2 SIGNED_INT
 EXP2: "e"|"E"
 FLOAT: INT _EXP | DECIMAL _EXP?
 SIGNED_FLOAT: PLUS_MINUS? FLOAT
-SIGNED_FLOAT2: 
 
 NUMBER: INT //FLOAT | INT
 SIGNED_NUMBER: PLUS_MINUS? NUMBER

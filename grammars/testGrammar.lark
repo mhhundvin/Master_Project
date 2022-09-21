@@ -1,15 +1,15 @@
 
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
-
-program: "program" CNAME "{" variable_decl+ statement+ "}"
-// program: "program" CNAME "{" (LF TAB variable_decl)+ (LF TAB statement)+ LF "}"
+start: program
+// program: "program" CNAME "{" (variable_decl";")+ (statement";")+ "}"
+program: "program" SPACE CNAME SPACE "{" (LF TAB variable_decl)+ (LF TAB statement)+ LF "}"
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
 
 
-variable_decl: "var" CNAME
-             | "let" CNAME
-             | "const" CNAME
+variable_decl: "var" SPACE CNAME
+             | "let" SPACE CNAME
+             | "const" SPACE CNAME
 
 
 
@@ -21,7 +21,7 @@ statement: while_statement
 
 
 
-while_statement: "while" "(" expr ")" "{" (LF TAB statement)* LF "}"
+while_statement: "while" SPACE "(" expr ")" SPACE "{" (LF TAB statement)* LF "}"
 // while_statement: "while" "(" expr ")" "{" statement* "}"
 
             //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
@@ -35,24 +35,24 @@ while_statement: "while" "(" expr ")" "{" (LF TAB statement)* LF "}"
 
 
 
-if_then_statement: "if" "(" expr ")" "{" (LF TAB statement)* LF "}"
+if_then_statement: "if" SPACE "(" expr ")" SPACE "{" (LF TAB statement)* LF "}"
 // if_then_statement: "if" "(" expr ")" "{" statement* "}"
 
 
 
-print_statement: "print" expr
+print_statement: "print" SPACE expr
 
 
 
-assignment_statement: CNAME "=" expr
+assignment_statement: CNAME SPACE "=" SPACE expr
 
 
 
 expr: NUMBER
-    | expr "+" expr
-    | expr "-" expr
-    | expr "*" expr
-    | expr "/" expr
+    | expr SPACE "+" SPACE expr
+    | expr SPACE "-" SPACE expr
+    | expr SPACE "*" SPACE expr
+    | expr SPACE "/" SPACE expr
     | "(" expr ")"
 
 

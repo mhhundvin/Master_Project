@@ -1,3 +1,5 @@
+start: value
+
 ?value: dict
       | list
       | string
