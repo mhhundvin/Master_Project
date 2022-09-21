@@ -9,12 +9,12 @@ class Compiler(Transformer):
     def start(self, args):
         if (len(args)>0):
             print(f'start: {args[0]}')
-        return args[0]
+        return args
 
     def regex(self, args):
         if (len(args)>0):
             print(f'regex: {args[0]}')
-        return args[0]
+        return args
 
     def regex_ere(self, args):
         temp = []
@@ -31,7 +31,7 @@ class Compiler(Transformer):
     def rex(self, args):
         if (len(args)>0):
             print(f'rex: {args[0]}')
-            temp =  Rex( args[0] )
+            temp =  Rex( args )
         # divided_regexp.append(temp)
             return temp
         return args
@@ -39,7 +39,7 @@ class Compiler(Transformer):
     def repetition(self, args):
         if (len(args)>0):
             print(f'repetition: {args[0]}')
-            temp =  Repetition( args[0] )
+            temp =  Repetition( args )
         # divided_regexp.append(temp)
             return temp
         return args
@@ -47,7 +47,7 @@ class Compiler(Transformer):
     def range(self, args):
         if (len(args)>0):
             print(f'range: {args[0]}')
-            temp =  Range( args[0] )
+            temp =  Range( args )
         # divided_regexp.append(temp)
             return temp
         return args
@@ -56,7 +56,7 @@ class Compiler(Transformer):
     def range_elt(self, args):
         if (len(args)>0):
             print(f'range_elt: {args[0]}')
-            temp =  Range_elt( args[0] )
+            temp =  Range_elt( args )
         # divided_regexp.append(temp)
             return temp
         return args
@@ -64,7 +64,7 @@ class Compiler(Transformer):
     def look(self, args):
         if (len(args)>0):
             print(f'look: {args[0]}')
-            temp =  Look( args[0] )
+            temp =  Look( args )
         # divided_regexp.append(temp)
             return temp
         return args
@@ -99,7 +99,7 @@ class Compiler(Transformer):
 
     def LETTER(self, args):
         if (len(args)>0):
-            print(f'LETTER: {args[0]}')
+            # print(f'LETTER: {args[0]}')
             temp =  Letter( args[0] )
         # divided_regexp.append(temp)
             return temp
@@ -125,5 +125,5 @@ for elem in divided_regexp:
         print(txt)
     else:
         print(f'ELEM: {elem.to_string()}')
-#     txt += elem.to_string()
-# print(txt)
+    # txt += elem.to_string()
+print(txt)

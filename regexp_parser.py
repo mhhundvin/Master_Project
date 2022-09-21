@@ -14,7 +14,7 @@ float_number =  '/((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+))/'
 
 letters = '/[A-Za-z]+/'
 
-letter = '/A+/'
+letter = '/(A|B+)*/'
 
 tree = parser.parse(letter)
 
