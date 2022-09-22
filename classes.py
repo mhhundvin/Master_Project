@@ -395,36 +395,13 @@ class Regexp(Generatable):
     def generate(self):
         name = self.name.to_string()
         regexp = self.args
-        # if regexp[-1] == "i":
-        #     regexp = regexp[1:-2]
-        # else:
         regexp = regexp[1:-1]
     
         # print(f'{self.args} ==> {regexp}')
         prev = False
         if "comment" in name.lower():
-            # txt = ""
-            # for  e in regexp:
-            # # for e in regexp:
-            #     if prev:
-            #         txt += f'\{e}'
-            #         continue
-            #     if e == "\\":
-            #         prev = True
-            #         continue
-            #     else:
-            #         prev = False
-            #     # elif e =="[":
-            #     #     break
-            #     txt += e
-            # temp = f'{regexp}(?=\[)'
-            # new_regexp = regexp.replace("\\", '')
-            # print(f'\n\t==>{new_regexp}\n\t==>{temp}')
-            # m = re.search(temp, regexp)
-            # if m:
-            #     return f'{txt} This is a comment'
-            # return "This is a comment"
             comments = [
+                "This is a comment",
                 "/* This is a comment */",
                 "// This is a comment",
                 "# This is a comment",
@@ -434,8 +411,7 @@ class Regexp(Generatable):
                 "- - This is a comment",
                 "{- This is a comment -}",
                 "=begin\nThis is a comment\n=end",
-                "<!--  This is a comment -->",
-                "This is a comment"
+                "<!--  This is a comment -->"
             ]
             for c in comments:
                 if re.fullmatch(regexp, c):
