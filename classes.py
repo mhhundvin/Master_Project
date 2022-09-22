@@ -189,7 +189,7 @@ class Optional(Generatable):
     def generate(self):
         # print(f'\n\n\t{self.args}')
         args = self.args
-        if isinstance(args, Sequence) or isinstance(args, Group) or isinstance(args, One_word):
+        if isinstance(args, Sequence) or isinstance(args, Group):
             args = args.get_arg()
         if not isinstance(args, list):
             raise Exception(f'What happend now? --> {args} <--')
@@ -330,40 +330,6 @@ class Sequence(Generatable):
             terminal_string += elem.generate()
             # if terminal_string and terminal_string[-1] != " " and not isinstance(elem, Token):
             #     terminal_string += " "
-        return terminal_string
-
-    def contains_cycle(self, nonterminal, visited, grammar):
-        args = self.args
-        for elem in args:
-            if isinstance(elem, list):
-                # print(f'----> SEQUENCE: {elem}')
-                elem = elem[0]
-            if elem.contains_cycle(nonterminal, visited, grammar):
-                return True
-        return False
-
-#####################################################################################
-
-class One_word(Generatable):
-    def __init__(self, args):
-        self.args = args
-
-    def to_string(self):
-        return list_to_string(self.args)
-
-    def get_arg(self):
-        return self.args
-    
-    def generate_shortest(self, transformed_grammar):
-        terminal_string = ''
-        for elem in self.args:
-            terminal_string += elem.generate_shortest(transformed_grammar)
-        return terminal_string
-    
-    def generate(self):
-        terminal_string = ''
-        for elem in self.args:
-            terminal_string += elem.generate()
         return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):

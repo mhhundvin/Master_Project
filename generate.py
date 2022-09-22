@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from split_grammar import split_grammar
-from classes import Generatable, Group, Literal_Range, Nonterminal, One_word, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
+from classes import Generatable, Group, Literal_Range, Nonterminal, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
 
 
 
@@ -43,12 +43,7 @@ def generate(grammar, depth):
             terminal_string = ""
 
             for element in alternative.get_arg():
-                # print(f'\t=>{element}')
-                # if not isinstance(element, Terminal):
-                #     print(f'\t\t=>{element.get_arg()}')
                 terminal_string += element.generate()
-                # if terminal_string and terminal_string[-1] != " " and not isinstance(element, Token):
-                #     terminal_string += " "
 
             print(f'{terminal_string}\n------------------------------')
             
@@ -77,8 +72,7 @@ def inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, alterna
             elif isinstance(element, Token):
                 depth -= 1
                 element = do_step_nonterminal(no_cycle_grammar, leftover_grammar, element, depth, halfway)
-                # new_alternative.append(element)
-                new_alternative.append( One_word( element.get_arg() ))
+                new_alternative.append(element)
 
             elif isinstance(element, Star):
                 depth -= 1
@@ -104,11 +98,6 @@ def inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, alterna
                 if element:
                     new_alternative += element.get_arg()
 
-            elif isinstance(element, One_word):
-                depth -= 1
-                element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element, depth)
-                if element:
-                    new_alternative.append(element)
                 
             elif isinstance(element, Repeat):
                 depth -= 1
@@ -122,10 +111,7 @@ def inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, alterna
                 new_alternative.append(element)
 
         if new_alternative:
-            if isinstance(nonterminal, Token):
-                alternative = One_word( new_alternative )
-            else:
-                alternative = Sequence( new_alternative )
+            alternative = Sequence( new_alternative )
 
 
     return alternative, depth
@@ -196,7 +182,7 @@ def contains_nonterminal(alternative):
     if isinstance(alternative, list):
         alternative = Sequence( alternative )
 
-    if not isinstance(alternative, Sequence) and not isinstance(alternative, One_word):
+    if not isinstance(alternative, Sequence):
         raise Exception(f'This, {alternative}, is supposed to be a Sequence.')
 
     for element in alternative.get_arg():
@@ -208,14 +194,6 @@ def contains_nonterminal(alternative):
         elif isinstance(element, Sequence):
             if contains_nonterminal(element):
                 return True
-        # elif isinstance(element, One_word):
-        #     # x = input(f'continue? {element.get_arg()}')
-        #     # if x == "nei":
-        #         # continue
-        #     if contains_nonterminal(element.get_arg()):
-        #         # print(f"LALALLALA")
-        #         return True
-        #     # print("NEXTNEXTNEXT")
             
         elif isinstance(element, Plus) or isinstance(element, Star) or isinstance(element, Optional):
             if isinstance(element.get_arg(), Sequence):
