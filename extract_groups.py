@@ -7,13 +7,13 @@ def extract_groups(grammar):
     for nonterminal, alternatives in grammar.items():
         # if nonterminal.to_string() == "DIGIT":
         #     break
-
+        num = 0
         for alternative in alternatives:
             # print(f'{nonterminal.to_string()}:\t{alternative}')
             # temp = extract_group(new_grammar, nonterminal, alternative, 0)
             # print(f'\t{temp.to_string()}')
             # print(f'\t\t{new_grammar[temp][0].to_string()}')
-            temp, _ = extract_group(new_grammar, nonterminal, alternative, 0)
+            temp, num = extract_group(new_grammar, nonterminal, alternative, num+1)
             new_grammar[nonterminal].append(temp)
 
             # print(new_grammar.keys())
