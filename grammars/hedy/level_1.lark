@@ -70,7 +70,6 @@ LETTER_OR_NUMERAL: LETTER_OR_UNDERSCORE | /[A-Za-z0-9]+/        // /[\p{Mn}\p{Mc
 _END_BLOCK: "end-block"
 
 
-DIGIT: /[0-9/
 // keywords-en.lark
 // https://github.com/Felienne/hedy/blob/main/grammars/keywords-en.lark
 
