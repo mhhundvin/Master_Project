@@ -19,11 +19,11 @@ def extract_groups(grammar):
             # print(new_grammar.keys())
         # break
 
-    print('\n##############################\n')
-    for k, v in new_grammar.items():
-        print(f'\n{k.to_string()}:')#\t\t\t{v}')
-        for elem in v:
-            print(f'\t{elem.to_string()}')
+    # print('\n##############################\n')
+    # for k, v in new_grammar.items():
+    #     print(f'\n{k.to_string()}:')#\t\t\t{v}')
+    #     for elem in v:
+    #         print(f'\t{elem.to_string()}')
     
     return new_grammar
 

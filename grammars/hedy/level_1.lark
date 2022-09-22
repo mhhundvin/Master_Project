@@ -1,0 +1,118 @@
+//symbols. they start with an underscore so they don't appear in the parse tree (Lark convention)
+
+_SPACE: " "+
+_COMMA: _SPACE? (","|"،"|"，") _SPACE? //support latin and arabic and Chinese commas and always allow these to be surrounded by spaces
+_COLON: _SPACE? ":" _SPACE?
+_LEFT_BRACKET : _SPACE? "(" _SPACE?
+_RIGHT_BRACKET : _SPACE? ")" _SPACE?
+_LEFT_SQUARE_BRACKET :  _SPACE? "[" _SPACE?
+_RIGHT_SQUARE_BRACKET : _SPACE? "]" _SPACE?
+_HASH: "#"
+_SMALLER : _SPACE? "<" _SPACE?
+_LARGER: _SPACE? ">" _SPACE?
+_EQUALS: _SPACE? "=" _SPACE? //always allow = to be surrounded by spaces
+_DOUBLE_EQUALS: _SPACE? "==" _SPACE?
+_NOT_EQUALS: _SPACE? "!=" _SPACE?
+_SMALLER_EQUALS : _SPACE? "<=" _SPACE?
+_LARGER_EQUALS: _SPACE? ">=" _SPACE?
+_EXCLAMATION_MARK: "!"
+_QUESTION_MARK: "?"
+_PERIOD: "."
+_SINGLE_QUOTE: "'" | "‘" | "’"
+_DOUBLE_QUOTE: "\""
+_QUOTE: _SINGLE_QUOTE | _DOUBLE_QUOTE
+_PLUS: _SPACE? "+" _SPACE?
+_MINUS: _SPACE? "-" _SPACE?
+_MULTIPLY: _SPACE? "*" _SPACE?
+_DIVIDE: _SPACE? "/" _SPACE?
+
+start: program
+program: _EOL* (command _EOL+)* command?
+command: print | ask | echo | turtle | error_invalid_space | error_invalid
+
+print: _PRINT (text)?
+ask: _ASK (text)?
+echo: _ECHO (text)?
+turtle: _FORWARD ((NUMBER | text))? -> forward
+      | _TURN ((left | right ))? -> turn
+      | _COLOR ((black | blue | brown | gray | green | orange
+                | pink | purple | red | white | yellow | text))? -> color
+error_invalid_space: _SPACE any
+error_invalid: textwithoutspaces text?
+
+any: /.+/ -> text
+
+COMMENT: _HASH /([^\n]+)/
+%ignore COMMENT
+
+_EOL: "\r"?"\n"
+
+NEGATIVE_NUMBER: _MINUS /[0-9]+/ ("." /[0-9]/)?       // /[\p{Nl}\p{Nd}\p{No}]+/ ("." /[\p{Nl}\p{Nd}\p{No}]+/)?
+POSITIVE_NUMBER: /[0-9]+/ ("." /[0-9]/)?              // /[\p{Nl}\p{Nd}\p{No}]+/ ("." /[\p{Nl}\p{Nd}\p{No}]+/)?
+NUMBER: NEGATIVE_NUMBER | POSITIVE_NUMBER
+INT: _MINUS? /[0-9]+/                                 // /[\p{Nl}\p{Nd}\p{No}]+/
+
+text: /([^\n#ـ])([^\n#]*)/ -> text //anything can be parsed except for a newline and a comment hash
+// to properly deal with tatweels, we also need to prevent text from starting with a tatweel,
+// otherwise we might parse  قولـــ  as the printing of ___ (see #2699)
+textwithoutspaces: /([^\n #]+)/ -> text //anything can be parsed except for a new line, spaces and a comment hash
+
+
+// FH Sept 2021: More info on this variable format: https://www.unicode.org/reports/tr31/tr31-1.html
+// Exact grammar stolen from: https://lark-parser.readthedocs.io/en/latest/classes.html
+
+NAME: LETTER_OR_UNDERSCORE LETTER_OR_NUMERAL*
+
+LETTER_OR_UNDERSCORE: /[A-Za-z]+/                               // /[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}_]+/
+LETTER_OR_NUMERAL: LETTER_OR_UNDERSCORE | /[A-Za-z0-9]+/        // /[\p{Mn}\p{Mc}\p{Nd}\p{Pc}·]+/
+
+// Internal symbol added by the preprocess_blocks function to indicate the end of blocks
+_END_BLOCK: "end-block"
+
+
+DIGIT: /[0-9/
+// keywords-en.lark
+// https://github.com/Felienne/hedy/blob/main/grammars/keywords-en.lark
+
+_PRINT: ("print" | "print") _SPACE?
+_ASK: ("ask" | "ask") _SPACE?
+_ECHO: ("echo" | "echo") _SPACE?
+_FORWARD: ("forward" | "forward") _SPACE?
+_TURN: ("turn" | "turn") _SPACE?
+left: ("left" | "left") _SPACE?
+right: ("right" | "right") _SPACE?
+black: ("black" | "black") _SPACE?
+blue: ("blue" | "blue") _SPACE?
+brown: ("brown" | "brown") _SPACE?
+gray: ("gray" | "gray") _SPACE?
+green: ("green" | "green") _SPACE?
+orange: ("orange" | "orange") _SPACE?
+pink: ("pink" | "pink") _SPACE?
+purple: ("purple" | "purple") _SPACE?
+red: ("red" | "red") _SPACE?
+white: ("white" | "white") _SPACE?
+yellow: ("yellow" | "yellow") _SPACE?
+_IS: _SPACE ("is" | "is") _SPACE
+_SLEEP: ("sleep" | "sleep") _SPACE?
+_ADD_LIST: ("add" | "add") _SPACE
+_TO_LIST: _SPACE ("to" | "to") _SPACE
+_REMOVE: ("remove" | "remove") _SPACE
+_FROM: _SPACE ("from" | "from") _SPACE
+_AT: _SPACE ("at" | "at") _SPACE
+random: ("random" | "random") _SPACE?
+_IN: _SPACE ("in" | "in") _SPACE
+_IF: ("if" | "if") _SPACE
+_ELSE: "else" | "else"
+_AND: _SPACE ("and" | "and") _SPACE
+_REPEAT: ("repeat" | "repeat") _SPACE
+_TIMES: _SPACE ("times" | "times")
+_FOR: ("for" | "for") _SPACE
+_RANGE: ("range" | "range") _SPACE?
+_TO: _SPACE ("to" | "to") _SPACE
+_STEP: "step" | "step"
+_ELIF: _SPACE? ("elif" | "elif") _SPACE
+_INPUT: ("input" | "input")
+_OR: _SPACE ("or" | "or") _SPACE
+_WHILE: ("while" | "while") _SPACE
+_LENGTH: "length" | "length"
+_COLOR : ("color" | "color") _SPACE?
