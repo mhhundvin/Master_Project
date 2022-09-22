@@ -17,7 +17,7 @@ class Compiler(Transformer):
         return args
 
     def rule(self, args):
-        grammar[args[0]] = args[-1]
+        grammar[args[0]] += args[-1]
     
     def token(self, args):
         grammar[args[0]] = args[-1]

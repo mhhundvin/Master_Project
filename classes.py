@@ -535,7 +535,7 @@ class Terminal(Generatable):
         return self.generate()
 
     def generate(self):
-        return self.terminal.replace('\\', '')
+        return self.terminal.replace("\\n", "\n").replace("\\r", "\r").replace("\\", "")
     
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.terminal, Generatable):
