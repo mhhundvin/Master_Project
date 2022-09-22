@@ -1,6 +1,7 @@
 import random
 from collections import defaultdict
 from split_grammar import split_grammar
+from handle_repetition import handle_repetition
 from classes import Generatable, Group, Literal_Range, Nonterminal, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
 
 
@@ -11,6 +12,15 @@ def generate(grammar, depth):
     print('The grammar is split in two')
     print('###################################################################################################################')
     print(f'\n\n')
+
+    print('###################################################################################################################')
+    grammar = handle_repetition(grammar)
+    print("Repetitions have been handeld.")
+    print('###################################################################################################################')
+    print(f'\n\n')
+
+
+    # input("Continue?")
 
     terminal_list = defaultdict(list)
 
@@ -43,7 +53,10 @@ def generate(grammar, depth):
             terminal_string = ""
 
             for element in alternative.get_arg():
-                terminal_string += element.generate()
+                if isinstance(element, Generatable):
+                    terminal_string += element.generate()
+                else:
+                    terminal_string += element
 
             print(f'{terminal_string}\n------------------------------')
             

@@ -327,7 +327,10 @@ class Sequence(Generatable):
     def generate(self):
         terminal_string = ''
         for elem in self.args:
-            terminal_string += elem.generate()
+            if isinstance(elem, Generatable):
+                terminal_string += elem.generate()
+            else:
+                terminal_string += elem
             # if terminal_string and terminal_string[-1] != " " and not isinstance(elem, Token):
             #     terminal_string += " "
         return terminal_string
