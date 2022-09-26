@@ -1,6 +1,6 @@
 from collections import defaultdict
 import random
-from classes import Group, Regexp, Nonterminal, Token, Sequence, Plus, Star, Optional, Literal_Range, Repeat
+from classes import Generatable, Group, Regexp, Nonterminal, Token, Sequence, Plus, Star, Optional, Literal_Range, Repeat
 
 def handle_repetition(grammar):
     new_grammar = defaultdict(list)
@@ -22,8 +22,8 @@ def extract_repetetor(grammar, nonterminal, alternative):
             alt = extract_repetetor(grammar, nonterminal, element.get_arg())
             alt = alt.get_arg()
             temp = alt
-            for i in range(0, random.randint(1,9)):
-                alt += (temp)
+            for _ in range(0, random.randint(1,9)):
+                alt += temp
             new_alternative.append(Sequence( alt ))
         
         elif isinstance(element, Star):
@@ -31,8 +31,8 @@ def extract_repetetor(grammar, nonterminal, alternative):
             alt = alt.get_arg()
             temp = alt
             x = random.randint(1,9)
-            for i in range(0, x):
-                alt += (temp)
+            for _ in range(0, x):
+                alt += temp
             if x % 2 == 0:
                 new_alternative.append(Sequence( alt ))
         
@@ -45,8 +45,16 @@ def extract_repetetor(grammar, nonterminal, alternative):
         
         elif isinstance(element, Repeat):
             arg, start, stop = element.get_arg()
-            temp = extract_repetetor(grammar, nonterminal, arg)
-            new_alternative.append( Repeat( temp, start, stop ))
+            alt = extract_repetetor(grammar, nonterminal, arg)
+            alt = alt.get_arg()
+            temp = alt
+            if isinstance(start, Generatable):
+                start = start.generate()
+            if isinstance(stop, Generatable):
+                stop = stop.generate()
+            for _ in range(start, stop):
+                alt += temp
+            new_alternative.append( Sequence( alt ))
 
         elif isinstance(element, Sequence):
             temp = extract_repetetor(grammar, nonterminal, element.get_arg())
