@@ -151,7 +151,18 @@ Compiler().transform(tree)
 # print("########################################################################################################################################################")
 # print(f'\n\n\n\n\n\n')
 
-# generate(grammar, 10)
+# for k,v in grammar.items():
+#     if k.to_string() != "list":
+#         continue
+#     print(f'{k.to_string()}:')
+#     x = v[0]
+#     x = x.get_arg()
+#     for e in x:
+#         y = e.get_arg()
+#         if isinstance(y, Group):
+#             print(y.get_arg())
+#     input("lala")
+
 print('###################################################################################################################')
 no_groups_grammar = extract_groups(grammar)
 print("Groups have been extracted.")
