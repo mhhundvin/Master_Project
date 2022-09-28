@@ -341,6 +341,8 @@ class Sequence(Generatable):
             if isinstance(elem, list):
                 # print(f'----> SEQUENCE: {elem}')
                 elem = elem[0]
+            if not isinstance(elem, Generatable):
+                continue
             if elem.contains_cycle(nonterminal, visited, grammar):
                 return True
         return False

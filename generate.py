@@ -15,6 +15,8 @@ def generate(grammar, depth):
 
     print('###################################################################################################################')
     grammar = handle_repetition(grammar)
+    no_cycle_grammar = handle_repetition(no_cycle_grammar)
+    leftover_grammar = handle_repetition(leftover_grammar)
     print("Repetitions have been handeld.")
     print('###################################################################################################################')
     print(f'\n\n')

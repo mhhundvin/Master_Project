@@ -1,18 +1,11 @@
 
 // program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
-
-// test: num+ "+" ("123" | (a))?
-// lala_test : ("la" | test) ~ 1 .. 9
-// test: (num | "abc")? "+"
 start: program
-     | variable_decl
-     | statement
-     | expr
+// program: "program" CNAME "{" (variable_decl";")+ (statement";")+ "}"
+program: "program" SPACE CNAME SPACE "{" (LF TAB variable_decl)+ (LF TAB statement)+ LF "}"
+// program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 
-program: "program" SPACE CNAME SPACE "{" SPACE (variable_decl ";" SPACE)+ (statement ";" SPACE)+ "}"
 
-// c: variable_decl SPACE
-// b: statement SPACE
 
 variable_decl: "var" SPACE CNAME
              | "let" SPACE CNAME
@@ -28,7 +21,9 @@ statement: while_statement
 
 
 
-while_statement: "while" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
+while_statement: "while" SPACE "(" expr ")" SPACE "{" (LF TAB statement)* LF "}"
+// while_statement: "while" "(" expr ")" "{" statement* "}"
+
             //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
 // statement_2: statement_3
 // statement_3: "HELLOA"//while_statement
@@ -40,7 +35,8 @@ while_statement: "while" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (stateme
 
 
 
-if_then_statement: "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
+if_then_statement: "if" SPACE "(" expr ")" SPACE "{" (LF TAB statement)* LF "}"
+// if_then_statement: "if" "(" expr ")" "{" statement* "}"
 
 
 
@@ -53,18 +49,14 @@ assignment_statement: CNAME SPACE "=" SPACE expr
 
 
 expr: NUMBER
-    | (expr _NEWLINE expr)
     | expr SPACE "+" SPACE expr
     | expr SPACE "-" SPACE expr
     | expr SPACE "*" SPACE expr
     | expr SPACE "/" SPACE expr
     | "(" expr ")"
-    // | num+ "+" num*
 
-// num : a* ".0" num? "x"
-// a : "1"* | "2"*
 
-// lala : "la" ~ 1 .. 9
+
 
 
 
@@ -81,29 +73,21 @@ expr: NUMBER
 
 DIGIT: "0".."9"
 
-//////////////////
 SPACE: " "
-
-_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
-COMMENT: /#[^\n]*/
-////////////////////
 
 HEXDIGIT: "a".."f"|"A".."F"|DIGIT
 
-INT: DIGIT+
-SIGNED_INT: PLUS_MINUS? INT
+INT: DIGIT+ //| DIGIT | DIGIT*
+SIGNED_INT: ["+"|"-"] INT
 DECIMAL: INT "." INT? | "." INT
 
 // float = /-?\d+(\.\d+)?([eE][+-]?\d+)?/
-_EXP: EXP2 SIGNED_INT
-EXP2: "e"|"E"
+_EXP: ("e"|"E") SIGNED_INT
 FLOAT: INT _EXP | DECIMAL _EXP?
-SIGNED_FLOAT: PLUS_MINUS? FLOAT
+SIGNED_FLOAT: ["+"|"-"] FLOAT
 
 NUMBER: INT //FLOAT | INT
-SIGNED_NUMBER: PLUS_MINUS? NUMBER
-
-PLUS_MINUS: "+"|"-"
+SIGNED_NUMBER: ["+"|"-"] NUMBER
 
 //
 // Strings
@@ -123,22 +107,20 @@ UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 WORD: LETTER+
 
-CNAME: CNAME2 CNAME3*
-CNAME2: "_"|LETTER
-CNAME3: "_"|LETTER|DIGIT
+CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+// CNAME: (LETTER|DIGIT)*
 
 
 //
 // Whitespace
 //
-WS_INLINE: WS_INLINE2+
-WS_INLINE2: " "|/\t/
+WS_INLINE: (" "|/\t/)+
 WS: /[ \t\f\r\n]/+
 
 CR : /\r/
 LF : /\n/
-NEWLINE: NEWLINE2+
-NEWLINE2: CR? LF
+NEWLINE: (CR? LF)+
+
 
 // Comments
 SH_COMMENT: /#[^\n]*/
@@ -148,6 +130,14 @@ SQL_COMMENT: /--[^\n]*/
 
 NAME: /[a-zA-Z_]\w*/
 
-new_lala: "a" new_lala | du
+STRING : /[A-Za-z]+/        // /[ubf]?r?("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
+LONG_STRING: /[A-Za-z]+/    // /[ubf]?r?(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?''')/is
 
-du: new_lala | "b"
+DEC_NUMBER: /0|[1-9]\d*/
+HEX_NUMBER.2: /0x[\da-f]*/
+OCT_NUMBER.2: /0o[0-7]*/
+BIN_NUMBER.2 : /0b[0-1]*/
+FLOAT_NUMBER.2: /((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+))/
+IMAG_NUMBER.2: /\d+j/ | FLOAT_NUMBER "j"
+
+TAB: /\t/

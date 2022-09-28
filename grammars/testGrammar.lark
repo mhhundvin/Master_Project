@@ -1,10 +1,19 @@
-
-// program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
 start: program
-// program: "program" CNAME "{" (variable_decl";")+ (statement";")+ "}"
-program: "program" SPACE CNAME SPACE "{" (LF TAB variable_decl)+ (LF TAB statement)+ LF "}"
-// program: "program" SPACE CNAME SPACE "{" variable_decl+ SPACE statement+ "}"
+     | expr
+     | variable_decl
+     | statement
 
+program: "program" SPACE CNAME SPACE "{" SPACE (variable_decl ";" SPACE)+ (statement ";" SPACE)+ "}"
+
+
+
+expr: NUMBER
+    | (expr _NEWLINE expr)
+    | expr SPACE "+" SPACE expr
+    | expr SPACE "-" SPACE expr
+    | expr SPACE "*" SPACE expr
+    | expr SPACE "/" SPACE expr
+    | "(" expr ")"
 
 
 variable_decl: "var" SPACE CNAME
@@ -17,26 +26,20 @@ statement: while_statement
          | if_then_statement
          | print_statement
          | assignment_statement
-        //  | stmt_a
 
 
 
-while_statement: "while" SPACE "(" expr ")" SPACE "{" (LF TAB statement)* LF "}"
-// while_statement: "while" "(" expr ")" "{" statement* "}"
+while_statement: "while" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
+            //    | "while" SPACE "(" SPACE expr SPACE ")" SPACE
+            //      ["do" SPACE "{" (statement ";" SPACE)* SPACE "}"]
+            //      "until" "(" expr ")"
 
-            //    | ["do" "{" statement_2* "}"] "until" "(" expr ")"
-// statement_2: statement_3
-// statement_3: "HELLOA"//while_statement
 
-// stmt_a: stmt_b | stmt_c | stmt_d
-// stmt_b: "b" [stmt_a] stmt_a //| "b" stmt_a 
-// stmt_c: "c" [stmt_a] 
-// stmt_d: "d" [stmt_a] 
+ 
 
 
 
-if_then_statement: "if" SPACE "(" expr ")" SPACE "{" (LF TAB statement)* LF "}"
-// if_then_statement: "if" "(" expr ")" "{" statement* "}"
+if_then_statement: "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
 
 
 
@@ -47,19 +50,7 @@ print_statement: "print" SPACE expr
 assignment_statement: CNAME SPACE "=" SPACE expr
 
 
-
-expr: NUMBER
-    | expr SPACE "+" SPACE expr
-    | expr SPACE "-" SPACE expr
-    | expr SPACE "*" SPACE expr
-    | expr SPACE "/" SPACE expr
-    | "(" expr ")"
-
-
-
-
-
-
+SPACE: " "
 
 // From GitHub:
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
@@ -72,22 +63,25 @@ expr: NUMBER
 //
 
 DIGIT: "0".."9"
-
-SPACE: " "
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+COMMENT: /#[^\n]*/
 
 HEXDIGIT: "a".."f"|"A".."F"|DIGIT
 
-INT: DIGIT+ //| DIGIT | DIGIT*
-SIGNED_INT: ["+"|"-"] INT
+INT: DIGIT+
+SIGNED_INT: PLUS_MINUS? INT
 DECIMAL: INT "." INT? | "." INT
 
 // float = /-?\d+(\.\d+)?([eE][+-]?\d+)?/
-_EXP: ("e"|"E") SIGNED_INT
+_EXP: EXP2 SIGNED_INT
+EXP2: "e"|"E"
 FLOAT: INT _EXP | DECIMAL _EXP?
-SIGNED_FLOAT: ["+"|"-"] FLOAT
+SIGNED_FLOAT: PLUS_MINUS? FLOAT
 
 NUMBER: INT //FLOAT | INT
-SIGNED_NUMBER: ["+"|"-"] NUMBER
+SIGNED_NUMBER: PLUS_MINUS? NUMBER
+
+PLUS_MINUS: "+"|"-"
 
 //
 // Strings
@@ -107,20 +101,22 @@ UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 WORD: LETTER+
 
-CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
-// CNAME: (LETTER|DIGIT)*
+CNAME: CNAME2 CNAME3*
+CNAME2: "_"|LETTER
+CNAME3: "_"|LETTER|DIGIT
 
 
 //
 // Whitespace
 //
-WS_INLINE: (" "|/\t/)+
+WS_INLINE: WS_INLINE2+
+WS_INLINE2: " "|/\t/
 WS: /[ \t\f\r\n]/+
 
 CR : /\r/
 LF : /\n/
-NEWLINE: (CR? LF)+
-
+NEWLINE: NEWLINE2+
+NEWLINE2: CR? LF
 
 // Comments
 SH_COMMENT: /#[^\n]*/
@@ -129,15 +125,3 @@ C_COMMENT: "/*" /(.|\n)*?/ "*/"
 SQL_COMMENT: /--[^\n]*/
 
 NAME: /[a-zA-Z_]\w*/
-
-STRING : /[A-Za-z]+/        // /[ubf]?r?("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
-LONG_STRING: /[A-Za-z]+/    // /[ubf]?r?(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?''')/is
-
-DEC_NUMBER: /0|[1-9]\d*/
-HEX_NUMBER.2: /0x[\da-f]*/
-OCT_NUMBER.2: /0o[0-7]*/
-BIN_NUMBER.2 : /0b[0-1]*/
-FLOAT_NUMBER.2: /((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+))/
-IMAG_NUMBER.2: /\d+j/ | FLOAT_NUMBER "j"
-
-TAB: /\t/
