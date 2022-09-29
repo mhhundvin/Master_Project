@@ -369,7 +369,6 @@ class Regexp(Generatable):
         regexp = regexp[1:-1]
     
         # print(f'{self.args} ==> {regexp}')
-        prev = False
         if "comment" in name.lower():
             comments = [
                 "This is a comment",
