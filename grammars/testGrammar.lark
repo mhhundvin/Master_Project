@@ -22,7 +22,7 @@ variable_decl: "var" SPACE CNAME
 
 
 statement: while_statement
-         | if_then_statement
+         | if_statement
          | print_statement
          | assignment_statement
 
@@ -33,9 +33,9 @@ while_statement: "while" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (stateme
             //      "until" "(" expr ")"
 
 
-if_then_statement: "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
-                //  | "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
-                //    "else" "{" SPACE (statement ";" SPACE)* SPACE "}"
+if_statement: "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
+            // | "if" SPACE "(" SPACE expr SPACE ")" SPACE "{" SPACE (statement ";" SPACE)* SPACE "}"
+            //   "else" "{" SPACE (statement ";" SPACE)* SPACE "}"
 
 
 print_statement: "print" "(" expr ")"

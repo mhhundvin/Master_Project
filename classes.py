@@ -109,9 +109,6 @@ class Literal_Range(Generatable):
         if isinstance(stop, Generatable):
             stop = stop.to_string()
         return start, stop
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.generate() 
 
     def generate(self):
         temp = f'[{self.start.generate()}-{self.stop.generate()}]'
@@ -139,9 +136,6 @@ class Repeat(Generatable):
     
     def get_arg(self):
         return self.args, self.start, self.stop
-
-    def generate_shortest(self, transformed_grammar):
-        return self.args.generate_shortest(transformed_grammar)
 
     def generate(self):
         arg = self.args
@@ -181,9 +175,6 @@ class Optional(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate_shortest(self, transformed_grammar):
-        return ""
 
     
     def generate(self):
@@ -215,9 +206,6 @@ class Star(Generatable):
     def get_arg(self):
         return self.args
     
-    def generate_shortest(self, transformed_grammar):
-        return ""
-    
     def generate(self):
         arg = self.args
         # print(f'\t==>STAR( {arg} )\n')
@@ -245,18 +233,6 @@ class Plus(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.args.generate_shortest(transformed_grammar)
-    
-    # def generate(self):
-    #     arg = self.args
-    #     if isinstance(arg, list):
-    #         arg = arg[0]
-    #     terminal_string = ''
-    #     for _ in range(0, draw_random_normal_int(1,9)):
-    #         terminal_string += arg.generate()
-    #     return terminal_string
     
     def generate(self):
         arg = self.args
@@ -318,12 +294,6 @@ class Sequence(Generatable):
     def get_arg(self):
         return self.args
     
-    def generate_shortest(self, transformed_grammar):
-        terminal_string = ''
-        for elem in self.args:
-            terminal_string += elem.generate_shortest(transformed_grammar)
-        return terminal_string
-    
     def generate(self):
         terminal_string = ''
         for elem in self.args:
@@ -358,10 +328,6 @@ class Regexp(Generatable):
 
     def to_string(self):
         return self.args
-    
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.generate()
     
     def generate(self):
         name = self.name.to_string()
@@ -437,12 +403,6 @@ class Nonterminal(Generatable):
     
     def to_string(self):       
         return self.nonterminal
-    
-    def generate_shortest(self, transformed_grammar):
-        lst = to_simple_list(transformed_grammar.get(self))
-        arg = random.choice(lst)
-        temp = arg.generate_shortest(transformed_grammar)
-        return temp
 
     def generate(self):
         grammar = self.grammar
@@ -479,11 +439,6 @@ class Token(Generatable):
     
     def to_string(self):       
         return self.token
-    
-    def generate_shortest(self, transformed_grammar):
-        arg = random.choice(transformed_grammar.get(self))
-        temp = arg.generate_shortest(transformed_grammar)
-        return temp
 
     def generate(self):
         grammar = self.grammar
@@ -500,9 +455,6 @@ class Terminal(Generatable):
 
     def to_string(self):
         return f'"{self.terminal}"'
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.generate()
 
     def generate(self):
         return self.terminal.replace("\\n", "\n").replace("\\r", "\r").replace("\\", "")
