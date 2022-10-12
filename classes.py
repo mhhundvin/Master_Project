@@ -137,21 +137,6 @@ class Repeat(Generatable):
     def get_arg(self):
         return self.args, self.start, self.stop
 
-    def generate(self):
-        arg = self.args
-        start = self.start
-        stop = self.stop
-        if isinstance(start, Generatable):
-            start = start.generate()
-        if isinstance(stop, Generatable):
-            stop = stop.generate()
-        terminal_string = ''
-        # print(f's: {start}, e: {end}')
-        start, stop = int(start), int(stop)
-        for _ in range(start, stop):
-            terminal_string += arg.generate()
-        return terminal_string
-
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
             return self.args.contains_cycle(nonterminal, visited, grammar )
@@ -176,19 +161,6 @@ class Optional(Generatable):
     def get_arg(self):
         return self.args
 
-    
-    def generate(self):
-        # print(f'\n\n\t{self.args}')
-        args = self.args
-        if isinstance(args, Sequence) or isinstance(args, Group):
-            args = args.get_arg()
-        if not isinstance(args, list):
-            raise Exception(f'What happend now? --> {args} <--')
-        arg = random.choice(args)
-        if isinstance(arg, Generatable):
-            return arg.generate()
-        return arg
-
     def contains_cycle(self, nonterminal, visited, grammar):
         return False
 
@@ -205,15 +177,6 @@ class Star(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate(self):
-        arg = self.args
-        # print(f'\t==>STAR( {arg} )\n')
-        terminal_string = ''
-        for _ in range(0, draw_random_normal_int(0,9)):
-            # print(arg)
-            terminal_string += arg.generate()
-        return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
@@ -233,15 +196,6 @@ class Plus(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate(self):
-        arg = self.args
-        # print(f'\t==>PULS( {arg} )\n')
-        terminal_string = ''
-        for _ in range(0, draw_random_normal_int(1,9)):
-            # print(arg)
-            terminal_string += arg.generate()
-        return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
@@ -268,10 +222,6 @@ class Group(Generatable):
     
     def get_arg(self):
         return self.args
-    
-    def generate(self):
-        arg = random.choice(self.args)
-        return arg.generate()
     
     def contains_cycle(self, nonterminal, visited, grammar):
         args = self.args
