@@ -1,0 +1,6 @@
+start: list | STRING | NUMBER | "null"     // | dict 
+list: "[" [start ("," start)*] "]"
+// dict: "{" [pair ("," pair)*] "}"
+// pair : string ":" start
+STRING: /[a-zA-Z0-9 ]*/
+NUMBER: /[0-9]+/

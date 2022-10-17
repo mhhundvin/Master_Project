@@ -1,17 +1,4 @@
-'''
-repetition(start=0, end=math.)
-optional
-star
-plus
-seq
-regex
-
-nonterminal
-terminal - string
-'''
-from distutils.log import error
 import random
-from tracemalloc import start, stop
 import exrex
 import numpy as np
 import re
@@ -109,13 +96,9 @@ class Literal_Range(Generatable):
         if isinstance(stop, Generatable):
             stop = stop.to_string()
         return start, stop
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.generate() 
 
     def generate(self):
         temp = f'[{self.start.generate()}-{self.stop.generate()}]'
-        # print(f'LITERAL RANGE: {temp}')
         return exrex.getone(temp)
 
     def contains_cycle(self, nonterminal, visited, grammar):
@@ -140,24 +123,6 @@ class Repeat(Generatable):
     def get_arg(self):
         return self.args, self.start, self.stop
 
-    def generate_shortest(self, transformed_grammar):
-        return self.args.generate_shortest(transformed_grammar)
-
-    def generate(self):
-        arg = self.args
-        start = self.start
-        stop = self.stop
-        if isinstance(start, Generatable):
-            start = start.generate()
-        if isinstance(stop, Generatable):
-            stop = stop.generate()
-        terminal_string = ''
-        # print(f's: {start}, e: {end}')
-        start, stop = int(start), int(stop)
-        for _ in range(start, stop):
-            terminal_string += arg.generate()
-        return terminal_string
-
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
             return self.args.contains_cycle(nonterminal, visited, grammar )
@@ -181,22 +146,6 @@ class Optional(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate_shortest(self, transformed_grammar):
-        return ""
-
-    
-    def generate(self):
-        # print(f'\n\n\t{self.args}')
-        args = self.args
-        if isinstance(args, Sequence) or isinstance(args, Group):
-            args = args.get_arg()
-        if not isinstance(args, list):
-            raise Exception(f'What happend now? --> {args} <--')
-        arg = random.choice(args)
-        if isinstance(arg, Generatable):
-            return arg.generate()
-        return arg
 
     def contains_cycle(self, nonterminal, visited, grammar):
         return False
@@ -214,18 +163,6 @@ class Star(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate_shortest(self, transformed_grammar):
-        return ""
-    
-    def generate(self):
-        arg = self.args
-        # print(f'\t==>STAR( {arg} )\n')
-        terminal_string = ''
-        for _ in range(0, draw_random_normal_int(0,9)):
-            # print(arg)
-            terminal_string += arg.generate()
-        return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
@@ -245,27 +182,6 @@ class Plus(Generatable):
 
     def get_arg(self):
         return self.args
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.args.generate_shortest(transformed_grammar)
-    
-    # def generate(self):
-    #     arg = self.args
-    #     if isinstance(arg, list):
-    #         arg = arg[0]
-    #     terminal_string = ''
-    #     for _ in range(0, draw_random_normal_int(1,9)):
-    #         terminal_string += arg.generate()
-    #     return terminal_string
-    
-    def generate(self):
-        arg = self.args
-        # print(f'\t==>PULS( {arg} )\n')
-        terminal_string = ''
-        for _ in range(0, draw_random_normal_int(1,9)):
-            # print(arg)
-            terminal_string += arg.generate()
-        return terminal_string
 
     def contains_cycle(self, nonterminal, visited, grammar):
         if isinstance(self.args, Generatable):
@@ -281,21 +197,15 @@ class Group(Generatable):
     def to_string(self):
         lst = []
         for elem in self.args:
-            # print(f'\t----> elem: {elem}')
             if isinstance(elem, Generatable):
                 lst.append(elem.to_string())
             else:
                 lst.append(elem)
-        # print(f'\t----> lst: {lst}')
         temp = ' | '.join(lst)
         return f'(({temp}))'
     
     def get_arg(self):
         return self.args
-    
-    def generate(self):
-        arg = random.choice(self.args)
-        return arg.generate()
     
     def contains_cycle(self, nonterminal, visited, grammar):
         args = self.args
@@ -318,16 +228,13 @@ class Sequence(Generatable):
     def get_arg(self):
         return self.args
     
-    def generate_shortest(self, transformed_grammar):
-        terminal_string = ''
-        for elem in self.args:
-            terminal_string += elem.generate_shortest(transformed_grammar)
-        return terminal_string
-    
     def generate(self):
         terminal_string = ''
         for elem in self.args:
-            terminal_string += elem.generate()
+            if isinstance(elem, Generatable):
+                terminal_string += elem.generate()
+            else:
+                terminal_string += elem
             # if terminal_string and terminal_string[-1] != " " and not isinstance(elem, Token):
             #     terminal_string += " "
         return terminal_string
@@ -336,8 +243,9 @@ class Sequence(Generatable):
         args = self.args
         for elem in args:
             if isinstance(elem, list):
-                # print(f'----> SEQUENCE: {elem}')
                 elem = elem[0]
+            if not isinstance(elem, Generatable):
+                continue
             if elem.contains_cycle(nonterminal, visited, grammar):
                 return True
         return False
@@ -354,17 +262,11 @@ class Regexp(Generatable):
     def to_string(self):
         return self.args
     
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.generate()
-    
     def generate(self):
         name = self.name.to_string()
         regexp = self.args
         regexp = regexp[1:-1]
     
-        # print(f'{self.args} ==> {regexp}')
-        prev = False
         if "comment" in name.lower():
             comments = [
                 "This is a comment",
@@ -428,25 +330,16 @@ class Nonterminal(Generatable):
         return hash(self.nonterminal)
 
     def __eq__(self, other):
-        # print(f'\n\n{self.nonterminal} == {other}')
         return self.nonterminal == other.nonterminal
     
     def to_string(self):       
         return self.nonterminal
-    
-    def generate_shortest(self, transformed_grammar):
-        lst = to_simple_list(transformed_grammar.get(self))
-        arg = random.choice(lst)
-        temp = arg.generate_shortest(transformed_grammar)
-        return temp
 
     def generate(self):
         grammar = self.grammar
         return random.choice(grammar.get(self)).generate()
 
     def contains_cycle(self, nonterminal, visited, grammar):
-        # Why do i need the or?
-        # withoute it I get an error when calling contains_cycle in split_grammar
         if self in visited or isinstance(nonterminal, Token):
             return False
         if self == nonterminal:
@@ -454,7 +347,6 @@ class Nonterminal(Generatable):
         visited.append(self)
         for elem in grammar.get(self):
             if isinstance(elem, list):
-                # print(f'----> NONTERMINAL: {elem}')
                 elem = elem[0]
             if elem.contains_cycle(nonterminal, visited, grammar):
                 return True
@@ -475,11 +367,6 @@ class Token(Generatable):
     
     def to_string(self):       
         return self.token
-    
-    def generate_shortest(self, transformed_grammar):
-        arg = random.choice(transformed_grammar.get(self))
-        temp = arg.generate_shortest(transformed_grammar)
-        return temp
 
     def generate(self):
         grammar = self.grammar
@@ -496,9 +383,6 @@ class Terminal(Generatable):
 
     def to_string(self):
         return f'"{self.terminal}"'
-    
-    def generate_shortest(self, transformed_grammar):
-        return self.generate()
 
     def generate(self):
         return self.terminal.replace("\\n", "\n").replace("\\r", "\r").replace("\\", "")

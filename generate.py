@@ -1,6 +1,7 @@
 import random
 from collections import defaultdict
 from split_grammar import split_grammar
+from handle_repetition import handle_repetition
 from classes import Generatable, Group, Literal_Range, Nonterminal, Repeat, Token, Plus, Optional, Star, Terminal, Regexp, Sequence
 
 
@@ -11,6 +12,17 @@ def generate(grammar, depth):
     print('The grammar is split in two')
     print('###################################################################################################################')
     print(f'\n\n')
+
+    print('###################################################################################################################')
+    grammar = handle_repetition(grammar, depth)
+    no_cycle_grammar = handle_repetition(no_cycle_grammar, depth)
+    leftover_grammar = handle_repetition(leftover_grammar, depth)
+    print("Repetitions have been handeld.")
+    print('###################################################################################################################')
+    print(f'\n\n')
+
+
+    # input("Continue?")
 
     terminal_list = defaultdict(list)
 
@@ -43,7 +55,10 @@ def generate(grammar, depth):
             terminal_string = ""
 
             for element in alternative.get_arg():
-                terminal_string += element.generate()
+                if isinstance(element, Generatable):
+                    terminal_string += element.generate()
+                else:
+                    terminal_string += element
 
             print(f'{terminal_string}\n------------------------------')
             
@@ -74,43 +89,16 @@ def inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, alterna
                 element = do_step_nonterminal(no_cycle_grammar, leftover_grammar, element, depth, halfway)
                 new_alternative.append(element)
 
-            elif isinstance(element, Star):
-                depth -= 1
-                element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element.get_arg(), depth)
-                if element:
-                    new_alternative.append(Star( element ) )
-
-            elif isinstance(element, Plus):
-                depth -= 1
-                element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element.get_arg(), depth)
-                if element:
-                    new_alternative.append( Plus( element ) )
-
-            elif isinstance(element, Optional):
-                depth -= 1
-                element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element.get_arg(), depth)
-                if element:
-                    new_alternative.append(Optional( element ) )
-
             elif isinstance(element, Sequence):
                 depth -= 1
                 element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element, depth)
                 if element:
-                    new_alternative += element.get_arg()
-
-                
-            elif isinstance(element, Repeat):
-                depth -= 1
-                arg, start, stop = element.get_arg()
-                element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, arg, depth)
-                if element:
-                    new_alternative.append(Repeat( element, start, stop ) )
-                
+                    new_alternative += element.get_arg()                
 
             else:
                 new_alternative.append(element)
 
-        if new_alternative:
+        if True:
             alternative = Sequence( new_alternative )
 
 
@@ -193,22 +181,6 @@ def contains_nonterminal(alternative):
         
         elif isinstance(element, Sequence):
             if contains_nonterminal(element):
-                return True
-            
-        elif isinstance(element, Plus) or isinstance(element, Star) or isinstance(element, Optional):
-            if isinstance(element.get_arg(), Sequence):
-                seq = element.get_arg()
-                if contains_nonterminal(seq):
-                    return True
-            else:
-                seq = Sequence( [element.get_arg()] )
-                if contains_nonterminal(seq):
-                    return True
-        elif isinstance(element, Repeat):
-            arg, start, stop = element.get_arg()
-            if not isinstance(arg, Sequence):
-                seq = Sequence( [arg] )
-            if contains_nonterminal(arg):
                 return True
 
     return False
