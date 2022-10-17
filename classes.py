@@ -1,17 +1,4 @@
-'''
-repetition(start=0, end=math.)
-optional
-star
-plus
-seq
-regex
-
-nonterminal
-terminal - string
-'''
-from distutils.log import error
 import random
-from tracemalloc import start, stop
 import exrex
 import numpy as np
 import re
@@ -112,7 +99,6 @@ class Literal_Range(Generatable):
 
     def generate(self):
         temp = f'[{self.start.generate()}-{self.stop.generate()}]'
-        # print(f'LITERAL RANGE: {temp}')
         return exrex.getone(temp)
 
     def contains_cycle(self, nonterminal, visited, grammar):
@@ -211,12 +197,10 @@ class Group(Generatable):
     def to_string(self):
         lst = []
         for elem in self.args:
-            # print(f'\t----> elem: {elem}')
             if isinstance(elem, Generatable):
                 lst.append(elem.to_string())
             else:
                 lst.append(elem)
-        # print(f'\t----> lst: {lst}')
         temp = ' | '.join(lst)
         return f'(({temp}))'
     
@@ -259,7 +243,6 @@ class Sequence(Generatable):
         args = self.args
         for elem in args:
             if isinstance(elem, list):
-                # print(f'----> SEQUENCE: {elem}')
                 elem = elem[0]
             if not isinstance(elem, Generatable):
                 continue
@@ -284,7 +267,6 @@ class Regexp(Generatable):
         regexp = self.args
         regexp = regexp[1:-1]
     
-        # print(f'{self.args} ==> {regexp}')
         if "comment" in name.lower():
             comments = [
                 "This is a comment",
@@ -348,7 +330,6 @@ class Nonterminal(Generatable):
         return hash(self.nonterminal)
 
     def __eq__(self, other):
-        # print(f'\n\n{self.nonterminal} == {other}')
         return self.nonterminal == other.nonterminal
     
     def to_string(self):       
@@ -359,8 +340,6 @@ class Nonterminal(Generatable):
         return random.choice(grammar.get(self)).generate()
 
     def contains_cycle(self, nonterminal, visited, grammar):
-        # Why do i need the or?
-        # withoute it I get an error when calling contains_cycle in split_grammar
         if self in visited or isinstance(nonterminal, Token):
             return False
         if self == nonterminal:
@@ -368,7 +347,6 @@ class Nonterminal(Generatable):
         visited.append(self)
         for elem in grammar.get(self):
             if isinstance(elem, list):
-                # print(f'----> NONTERMINAL: {elem}')
                 elem = elem[0]
             if elem.contains_cycle(nonterminal, visited, grammar):
                 return True

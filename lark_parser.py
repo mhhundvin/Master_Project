@@ -10,5 +10,3 @@ example = open('grammars/example.lark').read()
 parser = Lark(larkGrammar)
 
 tree = parser.parse(hedy_grammar)
-
-# print(tree.pretty())

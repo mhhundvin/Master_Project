@@ -89,43 +89,16 @@ def inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, alterna
                 element = do_step_nonterminal(no_cycle_grammar, leftover_grammar, element, depth, halfway)
                 new_alternative.append(element)
 
-            # elif isinstance(element, Star):
-            #     depth -= 1
-            #     element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element.get_arg(), depth)
-            #     if element:
-            #         new_alternative.append(Star( element ) )
-
-            # elif isinstance(element, Plus):
-            #     depth -= 1
-            #     element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element.get_arg(), depth)
-            #     if element:
-            #         new_alternative.append( Plus( element ) )
-
-            # elif isinstance(element, Optional):
-            #     depth -= 1
-            #     element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element.get_arg(), depth)
-            #     if element:
-            #         new_alternative.append(Optional( element ) )
-
             elif isinstance(element, Sequence):
                 depth -= 1
                 element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, element, depth)
                 if element:
-                    new_alternative += element.get_arg()
-
-                
-            # elif isinstance(element, Repeat):
-            #     depth -= 1
-            #     arg, start, stop = element.get_arg()
-            #     element, depth = inline_nonterminals(no_cycle_grammar, leftover_grammar, nonterminal, arg, depth)
-            #     if element:
-            #         new_alternative.append(Repeat( element, start, stop ) )
-                
+                    new_alternative += element.get_arg()                
 
             else:
                 new_alternative.append(element)
 
-        if new_alternative:
+        if True:
             alternative = Sequence( new_alternative )
 
 
@@ -209,21 +182,5 @@ def contains_nonterminal(alternative):
         elif isinstance(element, Sequence):
             if contains_nonterminal(element):
                 return True
-            
-        # elif isinstance(element, Plus) or isinstance(element, Star) or isinstance(element, Optional):
-        #     if isinstance(element.get_arg(), Sequence):
-        #         seq = element.get_arg()
-        #         if contains_nonterminal(seq):
-        #             return True
-        #     else:
-        #         seq = Sequence( [element.get_arg()] )
-        #         if contains_nonterminal(seq):
-        #             return True
-        # elif isinstance(element, Repeat):
-        #     arg, start, stop = element.get_arg()
-        #     if not isinstance(arg, Sequence):
-        #         seq = Sequence( [arg] )
-        #     if contains_nonterminal(arg):
-        #         return True
 
     return False

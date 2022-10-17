@@ -1,10 +1,7 @@
-from distutils.log import error
-from random import choice
 from lark import Transformer
 from collections import defaultdict
 from lark_parser import tree
 from classes import Generatable, Group, Nonterminal, Token, Terminal, Regexp, Star, Plus, Optional, Sequence, Repeat, Literal_Range
-from split_grammar import split_grammar
 from generate import generate
 from extract_groups import extract_groups
 
@@ -23,7 +20,6 @@ class Compiler(Transformer):
         grammar[args[0]] = args[-1]
 
     def expansions(self, args):
-        # print(f'EXPANSIONS: {args}')
         lst = []
         for elem in args:
             if isinstance(elem, list):
@@ -41,26 +37,12 @@ class Compiler(Transformer):
 
     
     def alias(self, args):
-        # print(f'ALIAS: {args[:-1]}\n')
         return args[:-1]
     
     def expansion(self, args):
-        # args is a list
-        # print(f'EXPANSION: {args}')
-        
-        # if isinstance(args, list):
-        #     if len(args) > 1:
-        #         raise Exception(f'Should not be a list? {args}')
-        #     args = args[0]
-        # if isinstance(args, Generatable):
-        #     return args
-        # else:
-        #     return Sequence( args )
-
         return Sequence( args )
     
     def opexper(self, args):
-        # args = atop OP
         op = args[1]
         arg = args[0]
         if op == "+":
@@ -76,32 +58,22 @@ class Compiler(Transformer):
         return Repeat(args[0], 0, args[1])
     
     def expr_range(self, args):
-        # print(f'expr_range {args}')
         return Repeat(args[0], args[1], args[2])
 
     def atom(self, args):
         return args
     
     def group(self, args):
-        # print(f'GROUP: {args[0]}')
         lst = []
         for elem in args[0]:
-            # if isinstance(elem, list):
-            #     if len(elem) > 1:
-            #         raise Exception(f'Should not be a list? {elem}')
-            #     elem = elem[0]
 
             if isinstance(elem, Generatable):
                 lst.append(elem)
             else:
                 lst.append(Sequence( elem ))
-        # if len(lst) == 1:
-        #     return lst[0]
         return Group( lst )
-        # return lst
 
     def maybe(self, args):
-        # print(f'MAYBE: {args[0]}')
         arg = args[0]
         if not isinstance(arg, list):
             arg = [arg]
@@ -133,7 +105,7 @@ class Compiler(Transformer):
         return Token( f'{args}', grammar )
 
     def STRING(self, args):
-        return Terminal( args[1:-1] )     # args[1:-1]
+        return Terminal( args[1:-1] )
 
     def REGEXP(self, args):
         return Regexp( args )
@@ -141,88 +113,10 @@ class Compiler(Transformer):
 Compiler().transform(tree)
 
 
-# print(f'\n\n\n\n\n\n')
-# print("########################################################################################################################################################")
-# print("########################################################################################################################################################")
-
-# print(f'\n\n\n\n\n\n')
-
-# print("########################################################################################################################################################")
-# print("########################################################################################################################################################")
-# print(f'\n\n\n\n\n\n')
-
-# for k,v in grammar.items():
-#     if k.to_string() != "list":
-#         continue
-#     print(f'{k.to_string()}:')
-#     x = v[0]
-#     x = x.get_arg()
-#     for e in x:
-#         y = e.get_arg()
-#         if isinstance(y, Group):
-#             print(y.get_arg())
-#     input("lala")
-
 print('###################################################################################################################')
 no_groups_grammar = extract_groups(grammar)
 print("Groups have been extracted.")
 print('###################################################################################################################')
 print(f'\n\n')
 
-# for k,v in no_groups_grammar.items():
-
-#     print(f'{k.to_string()}:')
-#     for alt in v:
-#         if not isinstance(alt, Sequence):
-#             alt = Sequence( [alt] )
-#         txt = ""
-#         for elem in alt.get_arg():
-#             if isinstance(elem, Group):
-#                 print(f'\n\n{txt} ++ {elem.to_string()}')
-#                 raise Exception(f'!!!!{k.to_string()} : {elem}!!!!')
-#             txt += elem.to_string()
-#         print(f'\t{txt}\n')
-
-# print(f'\n\n')
-# print("########################################################################################################################################################")
-# print("########################################################################################################################################################")
-# print(f'\n\n')
-
 generate(no_groups_grammar, 10)
-
-# no_cycle_grammar, leftover_grammar = split_grammar(grammar)
-
-# print(f'\n\ngrammar: {len(grammar)}, no_cycle: {len(no_cycle_grammar)}, leftover: {len(leftover_grammar)}')
-# print(len(no_cycle_grammar) + len(leftover_grammar) , '\n\n')
-
-# # for k, v in grammar.items():
-#     # if k.to_string() == "DIGIT":
-#     #     break
-#     # print(f'{k.to_string()}: {len(v)}\n')
-
-# print()
-
-
-
-
-# for k,v in grammar.items():
-
-#     if k.to_string() == "DIGIT":
-#         break
-
-#     print(k.to_string())
-
-#     v = "  |or|  ".join([x.to_string() for x in v])
-#     print(f'\tG\t{v}')
-
-#     if k in no_cycle_grammar.keys():
-#         v1 = no_cycle_grammar[k]
-#         v1 = "  |or|  ".join([x.to_string() for x in v1])
-#         print(f'\tG\'\t{v1}')
-
-#     if k in leftover_grammar.keys():
-#         v2 = leftover_grammar[k]
-#         v2 = "  |or|  ".join([x.to_string() for x in v2])
-#         print(f'\tG\'\'\t{v2}')
-    
-#     print('\n\n')
